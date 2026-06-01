@@ -1,0 +1,92 @@
+#ifndef MODEL_HPP
+#define MODEL_HPP
+
+#include <stddef.h>
+#include "domain/defect_config.h"
+#include "domain/operator_list.h"
+#include "domain/session.h"
+#include "net/inspection_queue.h"
+
+class ModelListener;
+
+/**
+ * @brief Expanded Model class that holds dynamic configuration data
+ *        received via MQTT and manages application state.
+ */
+class Model
+{
+public:
+    /* Maximum PIN digits the login screen supports (4 circles in the Designer). */
+    static const int PIN_MAX_LEN    = 4;
+
+    Model();
+
+    void bind(ModelListener* listener)
+    {
+        modelListener = listener;
+    }
+
+    void tick();
+
+    /* ----- Operator Management ----- */
+    bool validatePin(const char* pin, int* out_idx) const;
+    void setOperators(const operator_entry_t* list, int count);
+    int  getOperatorCount() const;
+    const operator_entry_t& getOperator(int idx) const;
+
+    /* ----- Product Management ----- */
+    void setProducts(const product_entry_t* list, int count);
+    int  getProductCount() const;
+    const product_entry_t& getProduct(int idx) const;
+    void setCurrentProductId(int id);
+    int  getCurrentProductId() const;
+
+    /* ----- Defect Type Management ----- */
+    void setDefectTypes(int product_id, int category,   // category: 0=PMP 1=INJ
+                       const defect_type_t* list, int count);
+    const defect_type_t* getDefectTypes(int product_id, int category,
+                                       int* out_count) const;
+
+    /* ----- Session Management ----- */
+    void setCurrentOperatorIdx(int idx);
+    int  getCurrentOperatorIdx() const;
+
+    void incrementSessionDefectCount() { session_increment_defect_count(); }
+    void resetSessionDefectCount();
+    int  getSessionDefectCount() const { return session_get_defect_count(); }
+
+    /* ----- Outgoing Inspection Management ----- */
+    void enqueueInspection(int product_id, int operator_id,
+                          const char* outcome,          // "DEFECT" | "OK"
+                          int defect_type_id,           // -1 if OK
+                          const char* note);
+    void publishSessionStart(int product_id, int operator_id);
+
+    /* ----- Preciser Management ----- */
+    enum class PreciserOrigin {
+        NONE,
+        PMP_DEFECTS,
+        INJ_DEFECTS
+    };
+    void setPreciserOrigin(PreciserOrigin origin);
+    PreciserOrigin getPreciserOrigin() const;
+    void setPreciserPendingText(const char* text);
+    const char* getPreciserPendingText() const;
+    void clearPreciser();
+
+    /* ----- Connection Status ----- */
+    bool isConnected() const; // Returns true if EVT_MQTT_CONNECTED bit is set
+
+protected:
+    ModelListener* modelListener;
+
+private:
+    static const size_t PRECISER_BUFFER_SIZE = 128;
+    PreciserOrigin m_preciserOrigin;
+    char m_preciserBuffer[PRECISER_BUFFER_SIZE];
+
+    // Connection status tracking (would be set by event bits from app_events.h)
+    bool m_connected;
+};
+
+#endif // MODEL_HPP

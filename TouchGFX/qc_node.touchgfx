@@ -1,0 +1,3789 @@
+{
+  "Application": {
+    "Screens": [
+      {
+        "Name": "login",
+        "CanvasBufferSize": 4080,
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "login.png"
+          },
+          {
+            "Type": "Circle",
+            "Name": "PIN_1",
+            "X": 36,
+            "Y": 160,
+            "Width": 80,
+            "Height": 80,
+            "Color": {
+              "Red": 26,
+              "Green": 85,
+              "Blue": 96
+            },
+            "CenterX": 40.0,
+            "CenterY": 40.0,
+            "Radius": 12.6,
+            "EndAngle": 360.0,
+            "CapPrecision": "Butt"
+          },
+          {
+            "Type": "Circle",
+            "Name": "PIN_2",
+            "X": 76,
+            "Y": 160,
+            "Width": 80,
+            "Height": 80,
+            "Color": {
+              "Red": 26,
+              "Green": 85,
+              "Blue": 96
+            },
+            "CenterX": 40.0,
+            "CenterY": 40.0,
+            "Radius": 12.6,
+            "EndAngle": 360.0,
+            "CapPrecision": "Butt"
+          },
+          {
+            "Type": "Circle",
+            "Name": "PIN_3",
+            "X": 116,
+            "Y": 160,
+            "Width": 80,
+            "Height": 80,
+            "Color": {
+              "Red": 26,
+              "Green": 85,
+              "Blue": 96
+            },
+            "CenterX": 40.0,
+            "CenterY": 40.0,
+            "Radius": 12.6,
+            "EndAngle": 360.0,
+            "CapPrecision": "Butt"
+          },
+          {
+            "Type": "Circle",
+            "Name": "PIN_4",
+            "X": 156,
+            "Y": 160,
+            "Width": 80,
+            "Height": 80,
+            "Color": {
+              "Red": 26,
+              "Green": 85,
+              "Blue": 96
+            },
+            "CenterX": 40.0,
+            "CenterY": 40.0,
+            "Radius": 12.6,
+            "EndAngle": 360.0,
+            "CapPrecision": "Butt"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_1",
+            "X": 12,
+            "Y": 316,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_2",
+            "X": 95,
+            "Y": 316,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_3",
+            "X": 178,
+            "Y": 316,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_4",
+            "X": 12,
+            "Y": 365,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_5",
+            "X": 95,
+            "Y": 365,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_6",
+            "X": 178,
+            "Y": 365,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_7",
+            "X": 12,
+            "Y": 414,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_8",
+            "X": 95,
+            "Y": 414,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keypad_9",
+            "X": 178,
+            "Y": 414,
+            "Width": 83,
+            "Height": 49,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 12,
+                "TextId": "keypad_num_3",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 255,
+                  "Green": 255,
+                  "Blue": 255
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 83,
+                "Height": 49,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 212,
+                  "Green": 183,
+                  "Blue": 101
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ],
+            "Clickable": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "goProductRef",
+            "Trigger": {
+              "Type": "TriggerClicked"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "productRef"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "splash",
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "splash.png"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "date_time",
+            "X": 21,
+            "Y": 431,
+            "Width": 231,
+            "Height": 17,
+            "TextId": "__SingleUse_4NDT",
+            "TextRotation": "0",
+            "Color": {
+              "Green": 87,
+              "Blue": 102
+            },
+            "AutoSize": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "goLogin",
+            "Trigger": {
+              "Type": "TriggerOnEveryTick",
+              "TickCount": 10
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "login"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "productRef",
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "empty_bg.png"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "next_button",
+            "Y": 430,
+            "Width": 272,
+            "Height": 50,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 5,
+                "TextId": "__SingleUse_LEK2",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 272,
+                "Height": 50,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorPressed": {
+                  "Green": 153,
+                  "Blue": 204
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "ScrollList",
+            "Name": "scrollList1",
+            "X": 34,
+            "Y": 158,
+            "Width": 205,
+            "Height": 49,
+            "ItemTemplateName": "CustomContainer1",
+            "NumberofItems": 10,
+            "Easing": "Bounce",
+            "EasingOption": "Out",
+            "SwipeAcceleration": 1.0,
+            "DragAcceleration": 1.0,
+            "OverShootPercentage": 75,
+            "Clickable": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "goDefects",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "next_button"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "defects_inj"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "defects_pmp",
+        "CanvasBufferSize": 4080,
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "empty_bg.png"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_4",
+            "X": 7,
+            "Y": 90,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_NJB4",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_5",
+            "X": 96,
+            "Y": 90,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_Y5Q5",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_6",
+            "X": 186,
+            "Y": 90,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_F4AT",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_7",
+            "X": 7,
+            "Y": 179,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_8CZX",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_8",
+            "X": 96,
+            "Y": 179,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 22,
+                "TextId": "__SingleUse_U0WF",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_9",
+            "X": 186,
+            "Y": 179,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 22,
+                "TextId": "__SingleUse_LXG8",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_10",
+            "X": 8,
+            "Y": 266,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 22,
+                "TextId": "__SingleUse_5JYT",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_other",
+            "X": 96,
+            "Y": 266,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_YDIP",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 245,
+                  "Green": 232,
+                  "Blue": 220
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "next_button",
+            "Y": 430,
+            "Width": 272,
+            "Height": 50,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 5,
+                "TextId": "__SingleUse_FQOE",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 272,
+                "Height": 50,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorPressed": {
+                  "Green": 153,
+                  "Blue": 204
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "Line",
+            "Name": "input_underline_ui",
+            "X": 21,
+            "Y": 375,
+            "Width": 230,
+            "Height": 16,
+            "Color": {
+              "Red": 8,
+              "Green": 8,
+              "Blue": 8
+            },
+            "StartY": 8.0,
+            "EndX": 230.0,
+            "EndY": 8.0,
+            "LineWidth": 1.0,
+            "LineEndingStyle": "Round"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "input_other",
+            "X": 25,
+            "Y": 362,
+            "Width": 54,
+            "Height": 17,
+            "TextId": "__SingleUse_W35D",
+            "TextRotation": "0",
+            "AutoSize": true,
+            "Clickable": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "goSummary",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "next_button"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "summary"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "defects_inj",
+        "CanvasBufferSize": 4080,
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "empty_bg.png"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_1",
+            "X": 7,
+            "Y": 28,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_4Z3T",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_2",
+            "X": 96,
+            "Y": 28,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 22,
+                "TextId": "__SingleUse_1T7J",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_3",
+            "X": 186,
+            "Y": 28,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_SA5S",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_4",
+            "X": 7,
+            "Y": 117,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_AWH1",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_5",
+            "X": 96,
+            "Y": 117,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_4CDG",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_6",
+            "X": 186,
+            "Y": 117,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_3U6Y",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_7",
+            "X": 7,
+            "Y": 206,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_6IVZ",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_8",
+            "X": 96,
+            "Y": 206,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 22,
+                "TextId": "__SingleUse_ZQ39",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_9",
+            "X": 186,
+            "Y": 206,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_TQ0P",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_10",
+            "X": 8,
+            "Y": 293,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_TBJS",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Green": 51,
+                  "Blue": 102
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "defect_other",
+            "X": 96,
+            "Y": 293,
+            "Width": 80,
+            "Height": 80,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 30,
+                "TextId": "__SingleUse_UMKI",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 80,
+                "Height": 80,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 5,
+                "ColorReleased": {
+                  "Red": 245,
+                  "Green": 232,
+                  "Blue": 220
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "next_button",
+            "Y": 430,
+            "Width": 272,
+            "Height": 50,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 5,
+                "TextId": "__SingleUse_IF0L",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 272,
+                "Height": 50,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorPressed": {
+                  "Green": 153,
+                  "Blue": 204
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "Line",
+            "Name": "input_underline_ui",
+            "X": 21,
+            "Y": 402,
+            "Width": 230,
+            "Height": 16,
+            "Color": {
+              "Red": 8,
+              "Green": 8,
+              "Blue": 8
+            },
+            "StartY": 8.0,
+            "EndX": 230.0,
+            "EndY": 8.0,
+            "LineWidth": 1.0,
+            "LineEndingStyle": "Round"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "input_other",
+            "X": 25,
+            "Y": 389,
+            "Width": 54,
+            "Height": 17,
+            "TextId": "__SingleUse_NTMB",
+            "TextRotation": "0",
+            "AutoSize": true,
+            "Clickable": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "goSummary",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "next_button"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "summary"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "summary",
+        "Components": [],
+        "Interactions": [
+          {
+            "InteractionName": "goSplash",
+            "Trigger": {
+              "Type": "TriggerScreenTransitionBegins"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionNone",
+              "ActionComponent": "splash"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "input_type",
+        "CanvasBufferSize": 4080,
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 272,
+            "Height": 480,
+            "RelativeFilename": "empty_bg.png"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "next_button",
+            "Y": 430,
+            "Width": 272,
+            "Height": 50,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 5,
+                "TextId": "__SingleUse_SJOW",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 272,
+                "Height": 50,
+                "LockToFlexButtonSize": true,
+                "ColorReleased": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorPressed": {
+                  "Green": 153,
+                  "Blue": 204
+                },
+                "ColorBorderReleased": {
+                  "Red": 26,
+                  "Green": 85,
+                  "Blue": 96
+                },
+                "ColorBorderPressed": {
+                  "Red": 51,
+                  "Green": 102,
+                  "Blue": 153
+                }
+              }
+            ],
+            "Clickable": true
+          },
+          {
+            "Type": "Line",
+            "Name": "input_underline_ui",
+            "X": 21,
+            "Y": 189,
+            "Width": 230,
+            "Height": 16,
+            "Color": {
+              "Red": 8,
+              "Green": 8,
+              "Blue": 8
+            },
+            "StartY": 8.0,
+            "EndX": 230.0,
+            "EndY": 8.0,
+            "LineWidth": 1.0,
+            "LineEndingStyle": "Round"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "input_other",
+            "X": 25,
+            "Y": 176,
+            "Width": 54,
+            "Height": 17,
+            "TextId": "__SingleUse_N1W1",
+            "TextRotation": "0",
+            "AutoSize": true,
+            "Clickable": true
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button_",
+            "X": 6,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_2I5I",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__1",
+            "X": 32,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_T8GS",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__2",
+            "X": 58,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_E85E",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__3",
+            "X": 84,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_2HXF",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__4",
+            "X": 110,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_VZON",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__5",
+            "X": 136,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_BEKF",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__6",
+            "X": 162,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_NJBM",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__7",
+            "X": 188,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_DKMU",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__8",
+            "X": 214,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_COBF",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__9",
+            "X": 240,
+            "Y": 297,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_080V",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__10",
+            "X": 6,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_N5AW",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__1_1",
+            "X": 32,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_L583",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__2_1",
+            "X": 58,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_5PJ4",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__3_1",
+            "X": 84,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_RR2N",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__4_1",
+            "X": 110,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_VTWM",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__5_1",
+            "X": 136,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_HQX8",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__6_1",
+            "X": 162,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_UVQH",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__7_1",
+            "X": 188,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_HRBX",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__8_1",
+            "X": 214,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_XPMI",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__9_1",
+            "X": 240,
+            "Y": 329,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_UZDM",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__3_1_1",
+            "X": 45,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_V8AZ",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__4_1_1",
+            "X": 71,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_BCNP",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__5_1_1",
+            "X": 97,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_KLK2",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__6_1_1",
+            "X": 123,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_WSNK",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__7_1_1",
+            "X": 149,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_E7PL",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__8_1_1",
+            "X": 175,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_OD1W",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__9_1_1",
+            "X": 201,
+            "Y": 361,
+            "Width": 26,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "TextButtonStyle",
+                "Y": 4,
+                "TextId": "__SingleUse_0XY5",
+                "TextRotation": "0",
+                "ColorReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorPressed": {
+                  "Red": 10,
+                  "Green": 10,
+                  "Blue": 10
+                }
+              },
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 26,
+                "Height": 32,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "keyboard_button__4_1_1_1",
+            "X": 58,
+            "Y": 393,
+            "Width": 156,
+            "Height": 25,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "BoxWithBorderButtonStyle",
+                "Width": 156,
+                "Height": 25,
+                "LockToFlexButtonSize": true,
+                "BorderSize": 1,
+                "ColorReleased": {
+                  "Red": 21,
+                  "Green": 70,
+                  "Blue": 79
+                },
+                "ColorPressed": {
+                  "Red": 228,
+                  "Green": 205,
+                  "Blue": 139
+                },
+                "ColorBorderReleased": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                },
+                "ColorBorderPressed": {
+                  "Red": 250,
+                  "Green": 238,
+                  "Blue": 227
+                }
+              }
+            ]
+          }
+        ],
+        "Interactions": []
+      }
+    ],
+    "CustomContainerDefinitions": [
+      {
+        "Name": "CustomContainer1",
+        "Width": 205,
+        "Height": 49,
+        "Components": [
+          {
+            "Type": "Box",
+            "Name": "box1",
+            "Width": 205,
+            "Height": 49,
+            "Color": {
+              "Red": 245,
+              "Green": 232,
+              "Blue": 220
+            }
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 46,
+            "Y": 13,
+            "Width": 112,
+            "Height": 20,
+            "TextId": "__SingleUse_D7O2",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 26,
+              "Green": 85,
+              "Blue": 96
+            },
+            "AutoSize": true
+          }
+        ],
+        "Interactions": []
+      }
+    ],
+    "Name": "qc_node",
+    "Resolution": {
+      "Width": 480,
+      "Height": 272
+    },
+    "SelectedColorDepth": 24,
+    "StartupScreenName": "splash",
+    "SelectedStartupLanguage": "FR",
+    "TouchGfxPath": "../Middlewares/ST/touchgfx",
+    "UIPath": ".",
+    "AvailableColorDepths": [
+      24
+    ],
+    "AvailableLCDs": {
+      "24": "LCD24bpp"
+    },
+    "AvailableSections": [
+      "ExtFlashSection",
+      "IntFlashSection"
+    ],
+    "AvailableResolutions": [
+      {
+        "Width": 480,
+        "Height": 272
+      }
+    ],
+    "PhysicalButtons": [],
+    "FrameworkFeatures": {
+      "LCD24bpp": {
+        "Id": "LCD24bpp",
+        "IsEnabled": true
+      }
+    },
+    "GenerateAssetsCommand": "make -f simulator/gcc/Makefile assets -j8",
+    "PostGenerateCommand": "touchgfx update_project --project-file=simulator/msvs/Application.vcxproj",
+    "PostGenerateTargetCommand": "touchgfx update_project",
+    "CompileSimulatorCommand": "make -f simulator/gcc/Makefile -j8",
+    "RunSimulatorCommand": "build\\bin\\simulator.exe",
+    "CompileTargetCommandOverride": "make -f ../gcc/Makefile -j8",
+    "FlashTargetCommandOverride": "make -f ../gcc/Makefile flash",
+    "FlashTargetIntCommandOverride": "make -f ../gcc/Makefile intflash",
+    "LandscapeSkinX": 0,
+    "LandscapeSkinY": 0,
+    "PortraitSkinX": 0,
+    "PortraitSkinY": 0,
+    "DisplayOrientation": "Portrait",
+    "Family": "STM32H7",
+    "SubFamily": "STM32H7A3/7B3",
+    "Toolchain": "STM32CubeIDE",
+    "Platform": "m7",
+    "ProjectFile": "../STM32H7B3I-DK.ioc",
+    "OptionalComponentsRoot": "../Middlewares/ST/touchgfx_components",
+    "OptionalComponents": [],
+    "AdditionalFeatures": [
+      "CWRVector",
+      "VectorFonts",
+      "Video"
+    ]
+  },
+  "Version": "4.26.1",
+  "CreatedBy": "4.26.1"
+}
