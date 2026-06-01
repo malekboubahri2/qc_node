@@ -4,6 +4,7 @@
 #include "domain/ui_data_bridge.h"
 #include "domain/operator_list.h"
 #include "domain/defect_config.h"
+#include "domain/config_parser.h"
 #include "cmsis_os2.h"
 #include <string.h>
 #include <stdio.h>
@@ -118,10 +119,15 @@ void mqtt_callback_config_products(const char            *pTopicName,
     }
 
     printf("mqtt_callback: products config stored successfully\n");
-    
-    /* TODO: Parse the JSON and extract product information to pass to the UI bridge */
-    /* For now, we'll note that new config is available and would need parsing */
-    printf("mqtt_callback: new products config available - parsing needed\n");
+
+    /* Parse and apply into the live domain model (product list + defect types).
+     * The payload is bounded to CONFIG_JSON_MAX_SIZE above; config_parser uses
+     * static scratch buffers so this is safe from the agent task context. */
+    if (config_parser_apply_products((const char *)pPayload, payloadLen) == 0) {
+        printf("mqtt_callback: products applied to model\n");
+    } else {
+        printf("mqtt_callback: products parse failed\n");
+    }
 }
 
 void mqtt_callback_config_operators(const char            *pTopicName,
@@ -176,10 +182,13 @@ void mqtt_callback_config_operators(const char            *pTopicName,
     }
 
     printf("mqtt_callback: operators config stored successfully\n");
-    
-    /* TODO: Parse the JSON and extract operator information to pass to the UI bridge */
-    /* For now, we'll note that new config is available and would need parsing */
-    printf("mqtt_callback: new operators config available - parsing needed\n");
+
+    /* Parse and apply into the operator list (used by login PIN validation). */
+    if (config_parser_apply_operators((const char *)pPayload, payloadLen) == 0) {
+        printf("mqtt_callback: operators applied to model\n");
+    } else {
+        printf("mqtt_callback: operators parse failed\n");
+    }
 }
 
 int mqtt_config_callbacks_init(void)

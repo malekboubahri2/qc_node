@@ -10,68 +10,26 @@ extern "C" {
 
 /**
  * @file pin_hash.h
- * @brief Secure PIN hashing for operator authentication.
- * 
- * Provides secure storage and verification of operator PINs.
- * Supports Argon2 if enabled, otherwise falls back to SHA-256 with salt.
+ * @brief Verify operator PINs against the server's encoded hash.
+ *
+ * The server stores/transmits PINs as "sha256:<hex_salt>:<hex_digest>" where
+ *   digest = SHA256(salt_string || pin_string)   (ASCII bytes, lowercase hex).
+ * See server/app/security.py:hash_pin. This module re-computes the digest for
+ * an entered PIN and compares it to the stored one.
  */
 
- /**
- * @brief Initialize the PIN hash module.
- * 
- * @return 0 on success, negative on error.
- */
+/** @brief No-op initialiser kept for symmetry with other domain modules. */
 int pin_hash_init(void);
 
 /**
- * @brief Hash a PIN for secure storage.
- * 
- * @param pin         PIN to hash (null-terminated string)
- * @param salt        Salt value (if NULL, a random salt is generated)
- * @param salt_len    Length of salt in bytes
- * @param hash_buf    Buffer to store the resulting hash
- * @param hash_buf_len Size of hash buffer
- * @param salt_out    Buffer to store the salt used (can be NULL)
- * @param salt_out_len Size of salt output buffer
- * 
- * @return 0 on success, negative on error.
+ * @brief Verify an entered PIN against an encoded hash string.
+ *
+ * @param pin      Entered PIN (null-terminated).
+ * @param encoded  "sha256:<hex_salt>:<hex_digest>" from the server.
+ *
+ * @return true if the PIN matches, false on mismatch or malformed input.
  */
-int pin_hash_hash(const char *pin, const uint8_t *salt, int salt_len,
-                 uint8_t *hash_buf, int hash_buf_len,
-                 uint8_t *salt_out, int salt_out_len);
-
-/**
- * @brief Verify a PIN against a stored hash.
- * 
- * @param pin         PIN to verify (null-terminated string)
- * @param salt        Salt used when the hash was created
- * @param salt_len    Length of salt in bytes
- * @param hash        Hash value to verify against
- * @param hash_len    Length of hash in bytes
- * 
- * @return true if PIN matches the hash, false otherwise.
- */
-bool pin_hash_verify(const char *pin, const uint8_t *salt, int salt_len,
-                    const uint8_t *hash, int hash_len);
-
-#ifdef APP_FEATURE_ARGON2_PIN
-/**
- * @brief Argon2-specific parameters (if enabled)
- */
-typedef struct
-{
-    uint32_t time_cost;      /**< Number of iterations */
-    uint32_t memory_cost;    /**< Memory usage in KB */
-    uint32_t parallelism;    /**< Number of threads */
-} pin_hash_argon2_params_t;
-
-/**
- * @brief Get the default Argon2 parameters.
- * 
- * @param params Pointer to store the parameters
- */
-void pin_hash_get_argon2_params(pin_hash_argon2_params_t *params);
-#endif /* APP_FEATURE_ARGON2_PIN */
+bool pin_hash_verify_encoded(const char *pin, const char *encoded);
 
 #ifdef __cplusplus
 }

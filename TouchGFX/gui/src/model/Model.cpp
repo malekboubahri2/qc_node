@@ -79,34 +79,9 @@ void Model::tick()
 
 bool Model::validatePin(const char* pin, int* out_idx) const
 {
-    // Delegate to operator_list module
-    int count = operator_list_get_count();
-    for (int i = 0; i < count; i++)
-    {
-        operator_entry_t op;
-        if (operator_list_get(i, &op) == 0)
-        {
-            if (strcmp(pin, op.pin) == 0)
-            {
-                if (out_idx)
-                {
-                    // Find the index in our stored list
-                    for (int j = 0; j < count; j++)
-                    {
-                        operator_entry_t op2;
-                        if (operator_list_get(j, &op2) == 0 && op2.id == op.id)
-                        {
-                            if (out_idx)
-                                *out_idx = j;
-                            break;
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-    }
-    return false;
+    // Delegate to operator_list, which re-hashes the entered PIN (SHA-256)
+    // and compares against the server-provided pin_hash.
+    return operator_list_check_pin(pin, out_idx);
 }
 
 void Model::setOperators(const operator_entry_t* list, int count)
@@ -145,10 +120,10 @@ const operator_entry_t& Model::getOperator(int idx) const
 
 void Model::setProducts(const product_entry_t* list, int count)
 {
-    // Convert our product_entry_t to defect_config's format
-    // For simplicity, we'll assume defect types are handled separately
-    defect_config_set(list, count, NULL, 0);
-    
+    // Defect types arrive separately via setDefectTypes(); setting the product
+    // list clears any previously stored defect types in defect_config.
+    defect_config_set_products(list, count);
+
     printf("Model: products updated (%d products)\n", count);
 }
 
@@ -188,26 +163,24 @@ int Model::getCurrentProductId() const
 void Model::setDefectTypes(int product_id, int category,
                           const defect_type_t* list, int count)
 {
-    // Delegate to defect_config module
-    // Note: This is a simplified implementation - in reality we'd need to
-    // convert our defect_type_t to defect_config's format
-    printf("Model: setting defect types for product %d, category %d (%d types)\n",
-           product_id, category, count);
-    
-    // TODO: Implement proper storage of defect types by product/category
+    defect_config_set_defect_types(product_id, category, list, count);
 }
 
 const defect_type_t* Model::getDefectTypes(int product_id, int category,
                                                  int* out_count) const
 {
-    static defect_type_t dummy_types[1] = { { 0, "" } };
-    
-    // TODO: Implement proper retrieval of defect types by product/category
-    // For now, return empty list
+    const defect_type_t* types = nullptr;
+    int count = 0;
+    if (defect_config_get_defect_types(product_id, category, &types, &count) == 0)
+    {
+        if (out_count)
+            *out_count = count;
+        return types;
+    }
+
     if (out_count)
         *out_count = 0;
-    
-    return dummy_types;
+    return nullptr;
 }
 
 void Model::enqueueInspection(int product_id, int operator_id,

@@ -10,69 +10,49 @@ extern "C" {
 
 /**
  * @file operator_list.h
- * @brief Operator PIN list management.
- * 
- * Manages operator information and PIN validation.
- * Config data is received via MQTT on qc/config/operators topic.
+ * @brief Operator list + PIN validation (from qc/config/operators).
+ *
+ * The server sends each operator's PIN as a hash string, never the plaintext
+ * PIN. Format: "sha256:<hex_salt>:<hex_digest>" where
+ *   digest = SHA256(salt_string || pin_string). Validation re-hashes the
+ * entered PIN and compares (see pin_hash.h / sha256.h).
  */
 
-/**
- * @brief Operator definition.
- */
+/* Holds "sha256:<16 hex>:<64 hex>" = 7 + 16 + 1 + 64 = 88 chars + NUL. */
+#define OPERATOR_PIN_HASH_MAX 96
+
+/** A single operator. */
 typedef struct
 {
-    int  id;                    /**< Operator ID */
-    char name[32 + 1];          /**< Operator name (null-terminated) */
-    char pin[8 + 1];            /**< PIN code (null-terminated, max 7 digits + null) */
+    int  id;                              /**< Server-side operator id. */
+    char name[32 + 1];                    /**< Display name, null-terminated. */
+    char pin_hash[OPERATOR_PIN_HASH_MAX]; /**< Encoded PIN hash from server. */
 } operator_entry_t;
 
 /**
- * @brief Initialize the operator list module.
- * 
- * @return 0 on success, negative on error.
+ * @brief Initialise the module. Idempotent: clears storage only on the first
+ *        call (see defect_config_init for the rationale).
  */
 int operator_list_init(void);
 
-/**
- * @brief Set the complete operator list configuration.
- * 
- * This function is called when a new operators config is received via MQTT.
- * 
- * @param operators   Array of operator entries
- * @param operator_count Number of operators in the array
- * 
- * @return 0 on success, negative on error.
- */
+/** @brief Replace the operator list. @return 0 on success, negative on error. */
 int operator_list_set(const operator_entry_t *operators, int operator_count);
 
-/**
- * @brief Get the number of configured operators.
- * 
- * @return Number of operators (0 if none configured).
- */
+/** @return Number of configured operators (0 if none). */
 int operator_list_get_count(void);
 
-/**
- * @brief Get an operator by index.
- * 
- * @param idx        Operator index (0-based)
- * @param operator   Pointer to store the operator data
- * 
- * @return 0 on success, negative on error (e.g., index out of bounds).
- */
+/** @return 0 and fills @p op on success, negative if @p idx out of range. */
 int operator_list_get(int idx, operator_entry_t *op);
 
 /**
- * @brief Validate an operator PIN.
- * 
- * @param operator_id Operator ID to validate
- * @param pin         PIN to check (null-terminated string)
- * @param operator    Pointer to store operator data if valid (can be NULL)
- * 
- * @return true if PIN is valid for the operator, false otherwise.
+ * @brief Find the operator whose stored PIN hash matches @p pin.
+ *
+ * @param[in]  pin      Entered PIN (null-terminated digit string).
+ * @param[out] out_idx  Receives the matching operator index (may be NULL).
+ *
+ * @return true if a match was found.
  */
-bool operator_list_validate_pin(int operator_id, const char *pin,
-                                operator_entry_t *op);
+bool operator_list_check_pin(const char *pin, int *out_idx);
 
 #ifdef __cplusplus
 }
