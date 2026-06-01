@@ -145,8 +145,10 @@
 #define LogError( msg )    APP_MQTT_LOG( APP_LOG_ERROR, msg )
 #define LogWarn(  msg )    APP_MQTT_LOG( APP_LOG_WARN,  msg )
 #define LogInfo(  msg )    APP_MQTT_LOG( APP_LOG_INFO,  msg )
-#define LogDebug( msg )    APP_MQTT_LOG( APP_LOG_DEBUG, msg )
-#define LogTrace( msg )    APP_MQTT_LOG( APP_LOG_TRACE, msg )
+/* Debug/Trace stay no-ops (as in stock coreMQTT): they are extremely verbose
+ * on the UART and some Trace sites reference errno without including it. */
+#define LogDebug( msg )    do { } while( 0 )
+#define LogTrace( msg )    do { } while( 0 )
 /*-------------------- Thread-safety hooks --------------------*/
 
 /**

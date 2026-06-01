@@ -9,7 +9,7 @@ extern "C" {
 
 /**
  * @file config_parser.h
- * @brief Decode qc/config/* JSON payloads into the domain storage modules.
+ * @brief Decode the qc/config JSON payloads into the domain storage modules.
  *
  * Pure C, no HAL — host-testable. Writes results into operator_list and
  * defect_config; callers are responsible for any concurrency guard (the live
