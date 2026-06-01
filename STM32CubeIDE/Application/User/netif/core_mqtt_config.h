@@ -131,12 +131,22 @@
 /* #define LogDebug( message ) */
 /* #define LogTrace( message ) */
 
-#include <stdio.h>
-     #define LogError( msg )    do { printf( "[ERR]  " ); printf msg; printf( "\n" ); } while( 0 )
-     #define LogWarn(  msg )    do { printf( "[WARN] " ); printf msg; printf( "\n" ); } while( 0 )
-     #define LogInfo(  msg )    do { printf( "[INFO] " ); printf msg; printf( "\n" ); } while( 0 )
-     #define LogDebug( msg )    do { } while( 0 )
-     #define LogTrace( msg )    do { } while( 0 )
+#include "app_log.h"
+/* Route coreMQTT logs to the unified logger (layer = mqtt). The library wraps
+ * its message in parentheses, so bracket it with begin/cont/end. */
+#define APP_MQTT_LOG( lvl, msg )                                      \
+    do {                                                             \
+        if( app_log_enabled( APP_LAYER_MQTT, ( lvl ) ) ) {          \
+            app_log_begin( APP_LAYER_MQTT, ( lvl ) );               \
+            app_log_cont msg;                                        \
+            app_log_end();                                          \
+        }                                                            \
+    } while( 0 )
+#define LogError( msg )    APP_MQTT_LOG( APP_LOG_ERROR, msg )
+#define LogWarn(  msg )    APP_MQTT_LOG( APP_LOG_WARN,  msg )
+#define LogInfo(  msg )    APP_MQTT_LOG( APP_LOG_INFO,  msg )
+#define LogDebug( msg )    APP_MQTT_LOG( APP_LOG_DEBUG, msg )
+#define LogTrace( msg )    APP_MQTT_LOG( APP_LOG_TRACE, msg )
 /*-------------------- Thread-safety hooks --------------------*/
 
 /**

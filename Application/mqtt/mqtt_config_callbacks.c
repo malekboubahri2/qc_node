@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include "app_log.h"
 /* Maximum allowed config JSON size (must fit in config_store sectors) */
 #define CONFIG_JSON_MAX_SIZE 4000
 
@@ -79,28 +80,28 @@ void mqtt_callback_config_products(const char            *pTopicName,
     (void)pProps;
     (void)pUserCtx;
 
-    printf("mqtt_callback: received products config (%zu bytes)\n", payloadLen);
+    LOG_INFO(APP_LAYER_CFG, "received products config (%zu bytes)" , payloadLen);
 
     /* Validate size */
     if (payloadLen > CONFIG_JSON_MAX_SIZE) {
-        printf("mqtt_callback: products config too large (%zu > %d)\n",
-               payloadLen, CONFIG_JSON_MAX_SIZE);
+        LOG_ERR(APP_LAYER_CFG, "products config too large (%zu > %d)",
+                payloadLen, CONFIG_JSON_MAX_SIZE);
         return;
     }
 
     /* Validate JSON structure */
     if (validate_json((const uint8_t *)pPayload, payloadLen) != 0) {
-        printf("mqtt_callback: invalid JSON in products config\n");
+        LOG_ERR(APP_LAYER_CFG, "invalid JSON in products config");
         return;
     }
 
     /* Extract and log schema version */
     uint16_t schema_version = extract_schema_version((const uint8_t *)pPayload, payloadLen);
-    printf("mqtt_callback: products schema_version = %u\n", schema_version);
+    LOG_INFO(APP_LAYER_CFG, "products schema_version = %u" , schema_version);
 
     /* Store to flash */
     if (config_store_write_products((const uint8_t *)pPayload, (uint16_t)payloadLen) != 0) {
-        printf("mqtt_callback: failed to persist products config\n");
+        LOG_ERR(APP_LAYER_CFG, "failed to persist products config");
         return;
     }
 
@@ -114,19 +115,19 @@ void mqtt_callback_config_products(const char            *pTopicName,
     meta.products_timestamp_ms = osKernelGetTickCount();
 
     if (config_store_write_meta(&meta) != 0) {
-        printf("mqtt_callback: failed to update metadata\n");
+        LOG_ERR(APP_LAYER_CFG, "failed to update metadata");
         return;
     }
 
-    printf("mqtt_callback: products config stored successfully\n");
+    LOG_INFO(APP_LAYER_CFG, "products config stored successfully");
 
     /* Parse and apply into the live domain model (product list + defect types).
      * The payload is bounded to CONFIG_JSON_MAX_SIZE above; config_parser uses
      * static scratch buffers so this is safe from the agent task context. */
     if (config_parser_apply_products((const char *)pPayload, payloadLen) == 0) {
-        printf("mqtt_callback: products applied to model\n");
+        LOG_INFO(APP_LAYER_CFG, "products applied to model");
     } else {
-        printf("mqtt_callback: products parse failed\n");
+        LOG_ERR(APP_LAYER_CFG, "products parse failed");
     }
 }
 
@@ -142,28 +143,28 @@ void mqtt_callback_config_operators(const char            *pTopicName,
     (void)pProps;
     (void)pUserCtx;
 
-    printf("mqtt_callback: received operators config (%zu bytes)\n", payloadLen);
+    LOG_INFO(APP_LAYER_CFG, "received operators config (%zu bytes)" , payloadLen);
 
     /* Validate size */
     if (payloadLen > CONFIG_JSON_MAX_SIZE) {
-        printf("mqtt_callback: operators config too large (%zu > %d)\n",
-               payloadLen, CONFIG_JSON_MAX_SIZE);
+        LOG_ERR(APP_LAYER_CFG, "operators config too large (%zu > %d)",
+                payloadLen, CONFIG_JSON_MAX_SIZE);
         return;
     }
 
     /* Validate JSON structure */
     if (validate_json((const uint8_t *)pPayload, payloadLen) != 0) {
-        printf("mqtt_callback: invalid JSON in operators config\n");
+        LOG_ERR(APP_LAYER_CFG, "invalid JSON in operators config");
         return;
     }
 
     /* Extract and log schema version */
     uint16_t schema_version = extract_schema_version((const uint8_t *)pPayload, payloadLen);
-    printf("mqtt_callback: operators schema_version = %u\n", schema_version);
+    LOG_INFO(APP_LAYER_CFG, "operators schema_version = %u" , schema_version);
 
     /* Store to flash */
     if (config_store_write_operators((const uint8_t *)pPayload, (uint16_t)payloadLen) != 0) {
-        printf("mqtt_callback: failed to persist operators config\n");
+        LOG_ERR(APP_LAYER_CFG, "failed to persist operators config");
         return;
     }
 
@@ -177,23 +178,23 @@ void mqtt_callback_config_operators(const char            *pTopicName,
     meta.operators_timestamp_ms = osKernelGetTickCount();
 
     if (config_store_write_meta(&meta) != 0) {
-        printf("mqtt_callback: failed to update metadata\n");
+        LOG_ERR(APP_LAYER_CFG, "failed to update metadata");
         return;
     }
 
-    printf("mqtt_callback: operators config stored successfully\n");
+    LOG_INFO(APP_LAYER_CFG, "operators config stored successfully");
 
     /* Parse and apply into the operator list (used by login PIN validation). */
     if (config_parser_apply_operators((const char *)pPayload, payloadLen) == 0) {
-        printf("mqtt_callback: operators applied to model\n");
+        LOG_INFO(APP_LAYER_CFG, "operators applied to model");
     } else {
-        printf("mqtt_callback: operators parse failed\n");
+        LOG_ERR(APP_LAYER_CFG, "operators parse failed");
     }
 }
 
 int mqtt_config_callbacks_init(void)
 {
-    printf("mqtt_config_callbacks: subscribing to config topics\n");
+    LOG_INFO(APP_LAYER_CFG, "subscribing to config topics");
 
     /* Subscribe to products config */
     MqttAgentStatus_t ret = MqttAgent_Subscribe(
@@ -204,7 +205,7 @@ int mqtt_config_callbacks_init(void)
         5000);
 
     if (ret != MQTT_AGENT_SUCCESS) {
-        printf("mqtt_config_callbacks: failed to subscribe to products (error %d)\n", ret);
+        LOG_ERR(APP_LAYER_CFG, "failed to subscribe to products (error %d)" , ret);
         return -1;
     }
 
@@ -217,11 +218,11 @@ int mqtt_config_callbacks_init(void)
         5000);
 
     if (ret != MQTT_AGENT_SUCCESS) {
-        printf("mqtt_config_callbacks: failed to subscribe to operators (error %d)\n", ret);
+        LOG_ERR(APP_LAYER_CFG, "failed to subscribe to operators (error %d)" , ret);
         return -1;
     }
 
-    printf("mqtt_config_callbacks: subscribed to config topics\n");
+    LOG_INFO(APP_LAYER_CFG, "subscribed to config topics");
     return 0;
 }
 

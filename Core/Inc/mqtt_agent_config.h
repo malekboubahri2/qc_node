@@ -166,11 +166,12 @@
  * ───────────────────────────────────────────────────────────────────────────── */
 
 /**
- * @brief Printf-style log macro. Define to empty to silence all agent output.
+ * @brief Log macro for the agent. Routed to the unified logger (layer = mqtt);
+ *        severity is gated at run time via app_log_set_level(APP_LAYER_MQTT,..).
  */
 #ifndef MQTT_AGENT_LOG
-#include <stdio.h>
-#define MQTT_AGENT_LOG( fmt, ... )  printf( "[MQTT] " fmt "\r\n", ##__VA_ARGS__ )
+#include "app_log.h"
+#define MQTT_AGENT_LOG( fmt, ... )  app_log_emit( APP_LAYER_MQTT, APP_LOG_INFO, fmt, ##__VA_ARGS__ )
 #endif
 
 #endif /* MQTT_AGENT_CONFIG_H */

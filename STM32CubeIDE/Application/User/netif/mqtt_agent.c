@@ -28,6 +28,7 @@
  */
 
 #include "mqtt_agent.h"
+#include "app_log.h"
 
 #include <string.h>
 #include <stdint.h>
@@ -739,6 +740,13 @@ static void resubscribe_all( void )
 static void dispatch_inbound( const MQTTPublishInfo_t  *pPub,
                                const MQTTPropBuilder_t  *pProps )
 {
+    LOG_INFO( APP_LAYER_MQTT, "inbound PUBLISH topic=%.*s payload=%u byte(s)%s",
+              ( int )pPub->topicNameLength, pPub->pTopicName,
+              ( unsigned )pPub->payloadLength,
+              pPub->retain ? " [retained]" : "" );
+
+    bool dispatched = false;
+
     for( uint32_t i = 0U; i < MQTT_AGENT_MAX_SUBSCRIPTIONS; i++ )
     {
         if( !s_subs[ i ].active ) continue;
@@ -753,6 +761,7 @@ static void dispatch_inbound( const MQTTPublishInfo_t  *pPub,
 
         if( matched && ( s_subs[ i ].pfCallback != NULL ) )
         {
+            dispatched = true;
             s_subs[ i ].pfCallback( pPub->pTopicName,
                                      pPub->topicNameLength,
                                      pPub->pPayload,
@@ -760,6 +769,11 @@ static void dispatch_inbound( const MQTTPublishInfo_t  *pPub,
                                      pProps,
                                      s_subs[ i ].pUserCtx );
         }
+    }
+
+    if( !dispatched )
+    {
+        LOG_WARN( APP_LAYER_MQTT, "inbound PUBLISH matched no subscription" );
     }
 }
 

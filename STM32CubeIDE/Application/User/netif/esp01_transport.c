@@ -6,23 +6,19 @@
  */
 
 #include "esp01_transport.h"
+#include "app_log.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>     /* strtol */
 #include <limits.h>
 
-#define ESP01_LOG_ENABLED( level ) \
-    ( ( uint32_t )ESP01_LOG_LEVEL >= ( uint32_t )( level ) )
-
-#define ESP01_LOG_ERROR( ... ) \
-    do { if( ESP01_LOG_ENABLED( ESP01_LOG_LEVEL_ERROR ) ) { printf( "[esp01][error] " ); printf( __VA_ARGS__ ); } } while( 0 )
-#define ESP01_LOG_INFO( ... ) \
-    do { if( ESP01_LOG_ENABLED( ESP01_LOG_LEVEL_INFO ) ) { printf( "[esp01][info] " ); printf( __VA_ARGS__ ); } } while( 0 )
-#define ESP01_LOG_DEBUG( ... ) \
-    do { if( ESP01_LOG_ENABLED( ESP01_LOG_LEVEL_DEBUG ) ) { printf( "[esp01][debug] " ); printf( __VA_ARGS__ ); } } while( 0 )
-#define ESP01_LOG_TRACE( ... ) \
-    do { if( ESP01_LOG_ENABLED( ESP01_LOG_LEVEL_TRACE ) ) { printf( "[esp01][trace] " ); printf( __VA_ARGS__ ); } } while( 0 )
+/* Route the driver's logs to the unified logger (layer = net). Severity is
+ * gated at run time per-layer via app_log_set_level(APP_LAYER_NET, ...). */
+#define ESP01_LOG_ERROR( ... ) app_log_emit( APP_LAYER_NET, APP_LOG_ERROR, __VA_ARGS__ )
+#define ESP01_LOG_INFO( ... )  app_log_emit( APP_LAYER_NET, APP_LOG_INFO,  __VA_ARGS__ )
+#define ESP01_LOG_DEBUG( ... ) app_log_emit( APP_LAYER_NET, APP_LOG_DEBUG, __VA_ARGS__ )
+#define ESP01_LOG_TRACE( ... ) app_log_emit( APP_LAYER_NET, APP_LOG_TRACE, __VA_ARGS__ )
 
 #define ESP01_SCAN_LINE_MAX_LEN 192U
 

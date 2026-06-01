@@ -30,6 +30,7 @@
 #include "esp01_transport.h"
 #include "mqtt_task.h"
 #include "persistence/config_loader.h"
+#include "app_log.h"
 #include <stdlib.h>
 /* USER CODE END Includes */
 
@@ -184,6 +185,13 @@ int main(void)
   /* Call PreOsInit function */
   MX_TouchGFX_PreOSInit();
   /* USER CODE BEGIN 2 */
+  /* Initialise the unified logger. Default per-layer level is INFO; raise a
+   * layer to DEBUG/TRACE for focused debugging, e.g.:
+   *   app_log_set_level(APP_LAYER_NET, APP_LOG_DEBUG);  // show AT traffic
+   *   app_log_set_level(APP_LAYER_CFG, APP_LOG_DEBUG);  // config parsing
+   */
+  app_log_init();
+
   SDRAM_Initialization_Sequence(&hsdram1, &command);
   esp_init();
 

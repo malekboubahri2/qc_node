@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "app_log.h"
 #if defined(__GNUC__)
 #define MQTT_TASK_MAYBE_UNUSED __attribute__((unused))
 #else
@@ -76,12 +77,12 @@ static void load_credentials_from_storage(MqttTaskConfig_t *cfg)
     uint16_t len = sizeof(buf);
 
     if (config_store_read_credentials(buf, &len) != 0) {
-        printf("mqtt_task: no credentials found in storage\n");
+        LOG_INFO(APP_LAYER_MQTT, "no credentials found in storage");
         return;
     }
 
     if (len != sizeof(config_store_credentials_t)) {
-        printf("mqtt_task: invalid credentials size (%u)\n", (unsigned)len);
+        LOG_ERR(APP_LAYER_MQTT, "invalid credentials size (%u)" , (unsigned)len);
         return;
     }
 
@@ -89,7 +90,7 @@ static void load_credentials_from_storage(MqttTaskConfig_t *cfg)
     uint32_t stored_crc = creds->crc32;
 
     if (stored_crc == 0xFFFFFFFFUL) {
-        printf("mqtt_task: no credentials found in storage\n");
+        LOG_INFO(APP_LAYER_MQTT, "no credentials found in storage");
         return;
     }
 
@@ -100,9 +101,8 @@ static void load_credentials_from_storage(MqttTaskConfig_t *cfg)
     creds->crc32 = stored_crc;
 
     if (stored_crc != computed_crc) {
-        printf("mqtt_task: CRC mismatch in credentials (stored=0x%08lx, computed=0x%08lx)\n",
-               stored_crc,
-               computed_crc);
+        LOG_ERR(APP_LAYER_MQTT, "CRC mismatch in credentials (stored=0x%08lx, computed=0x%08lx)",
+                stored_crc, computed_crc);
         return;
     }
 
@@ -116,7 +116,7 @@ static void load_credentials_from_storage(MqttTaskConfig_t *cfg)
     cfg->username = (s_loadedCreds.mqtt_username[0] != '\0') ? s_loadedCreds.mqtt_username : NULL;
     cfg->password = (s_loadedCreds.mqtt_password[0] != '\0') ? s_loadedCreds.mqtt_password : NULL;
 
-    printf("mqtt_task: loaded credentials from storage\n");
+    LOG_INFO(APP_LAYER_MQTT, "loaded credentials from storage");
 }
 
 static int MQTT_TASK_MAYBE_UNUSED save_credentials_to_storage(const MqttTaskConfig_t *cfg)
@@ -141,22 +141,22 @@ static int MQTT_TASK_MAYBE_UNUSED save_credentials_to_storage(const MqttTaskConf
         sizeof(config_store_credentials_t) - sizeof(creds.crc32));
 
     if (config_store_write_credentials((const uint8_t *)&creds, sizeof(creds)) != 0) {
-        printf("mqtt_task: failed to save credentials to storage\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to save credentials to storage");
         return -1;
     }
 
-    printf("mqtt_task: saved credentials to storage\n");
+    LOG_INFO(APP_LAYER_MQTT, "saved credentials to storage");
     return 0;
 }
 
 static int MQTT_TASK_MAYBE_UNUSED clear_credentials_from_storage(void)
 {
     if (config_store_clear_credentials() != 0) {
-        printf("mqtt_task: failed to clear credentials from storage\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to clear credentials from storage");
         return -1;
     }
 
-    printf("mqtt_task: cleared credentials from storage\n");
+    LOG_INFO(APP_LAYER_MQTT, "cleared credentials from storage");
     return 0;
 }
 
@@ -201,7 +201,7 @@ static void mqtt_task_store_inspection(const inspection_msg_t *msg)
     pmsg.timestamp = osKernelGetTickCount();
 
     if (persistent_inspection_queue_store(&pmsg) == 0) {
-        printf("mqtt_task: stored inspection for later transmission\n");
+        LOG_INFO(APP_LAYER_MQTT, "stored inspection for later transmission");
     }
 }
 
@@ -213,7 +213,7 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
         persistent_inspection_msg_t pmsg;
 
         if (persistent_inspection_queue_retrieve(&pmsg) != 0) {
-            printf("mqtt_task: failed to retrieve stored inspection\n");
+            LOG_ERR(APP_LAYER_MQTT, "failed to retrieve stored inspection");
             break;
         }
 
@@ -228,17 +228,17 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
                            pmsg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
-            printf("mqtt_task: failed to create stored inspection JSON payload\n");
+            LOG_ERR(APP_LAYER_MQTT, "failed to create stored inspection JSON payload");
             break;
         }
 
         if (mqtt_task_publish_to_topic(topic, json_payload, (size_t)len) != 0) {
-            printf("mqtt_task: failed to publish stored inspection\n");
+            LOG_ERR(APP_LAYER_MQTT, "failed to publish stored inspection");
             (void)persistent_inspection_queue_store(&pmsg);
             break;
         }
 
-        printf("mqtt_task: stored inspection queued successfully\n");
+        LOG_INFO(APP_LAYER_MQTT, "stored inspection queued successfully");
     }
 }
 
@@ -253,16 +253,15 @@ static void mqtt_task_service_inspection_queue(void)
     char topic[96];
     int tn = snprintf(topic, sizeof(topic), MQTT_TOPIC_DEVICE_INSPECT_FMT, s_cfg.client_id);
     if ((tn <= 0) || (tn >= (int)sizeof(topic))) {
-        printf("mqtt_task: failed to generate inspection topic\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to generate inspection topic");
         return;
     }
 
     mqtt_task_flush_persistent_inspections(topic);
 
     while (inspection_queue_receive(&msg, 0U) == 0) {
-        printf("mqtt_task: sending inspection (product=%d, outcome=%s)\n",
-               msg.product_id,
-               msg.outcome);
+        LOG_INFO(APP_LAYER_MQTT, "sending inspection (product=%d, outcome=%s)",
+                 msg.product_id, msg.outcome);
 
         char json_payload[256];
         int len = snprintf(json_payload,
@@ -276,17 +275,17 @@ static void mqtt_task_service_inspection_queue(void)
                            msg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
-            printf("mqtt_task: failed to create inspection JSON payload\n");
+            LOG_ERR(APP_LAYER_MQTT, "failed to create inspection JSON payload");
             continue;
         }
 
         if (mqtt_task_publish_to_topic(topic, json_payload, (size_t)len) != 0) {
-            printf("mqtt_task: failed to publish inspection; storing for retry\n");
+            LOG_ERR(APP_LAYER_MQTT, "failed to publish inspection; storing for retry");
             mqtt_task_store_inspection(&msg);
             break;
         }
 
-        printf("mqtt_task: inspection queued successfully\n");
+        LOG_INFO(APP_LAYER_MQTT, "inspection queued successfully");
     }
 }
 
@@ -298,7 +297,7 @@ static void mqtt_task_stop_agent(bool *pAgentStarted)
 
     MqttAgentStatus_t ret = MqttAgent_Stop(MQTT_TASK_AGENT_STOP_MS);
     if (ret != MQTT_AGENT_SUCCESS) {
-        printf("mqtt_task: MqttAgent_Stop returned %d\n", (int)ret);
+        LOG_INFO(APP_LAYER_MQTT, "MqttAgent_Stop returned %d" , (int)ret);
     }
 
     *pAgentStarted = false;
@@ -308,32 +307,32 @@ static void mqtt_task_stop_agent(bool *pAgentStarted)
 static void mqtt_task(void *pv)
 {
     (void)pv;
-    printf("mqtt_task: started\n");
+    LOG_INFO(APP_LAYER_MQTT, "started");
 
     if (config_store_init() != 0) {
-        printf("mqtt_task: config_store_init failed; using provided config only\n");
+        LOG_ERR(APP_LAYER_MQTT, "config_store_init failed; using provided config only");
     } else {
         load_credentials_from_storage(&s_cfg);
     }
 
     if (!mqtt_task_config_is_valid()) {
-        printf("mqtt_task: missing Wi-Fi or MQTT configuration\n");
+        LOG_ERR(APP_LAYER_MQTT, "missing Wi-Fi or MQTT configuration");
         osThreadExit();
         return;
     }
 
     if (ESP01_Init(&s_netCtx, &huart2) != ESP01_SUCCESS) {
-        printf("ESP01_Init failed\n");
+        LOG_ERR(APP_LAYER_MQTT, "ESP01_Init failed");
         osThreadExit();
         return;
     }
 
     if (persistent_inspection_queue_init() != 0) {
-        printf("mqtt_task: failed to initialize persistent inspection queue\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to initialize persistent inspection queue");
     }
 
     if (inspection_queue_init() != 0) {
-        printf("mqtt_task: failed to initialize inspection queue\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to initialize inspection queue");
     }
 
     MqttTaskState_t taskState = MQTT_TASK_STATE_WIFI_CHECK;
@@ -343,7 +342,7 @@ static void mqtt_task(void *pv)
     bool configCallbacksReady = false;
 
     for (;;) {
-        printf("mqtt_task: state=%s\n", mqtt_task_state_name(taskState));
+        LOG_DBG(APP_LAYER_MQTT, "state=%s" , mqtt_task_state_name(taskState));
 
         switch (taskState) {
         case MQTT_TASK_STATE_WIFI_CHECK: {
@@ -352,7 +351,7 @@ static void mqtt_task(void *pv)
 
             if ((ret == ESP01_SUCCESS) && joined) {
                 wifiConnected = true;
-                printf("mqtt_task: Wi-Fi already joined, skipping CWJAP\n");
+                LOG_INFO(APP_LAYER_MQTT, "Wi-Fi already joined, skipping CWJAP");
                 taskState = MQTT_TASK_STATE_TCP_CONNECT;
             } else {
                 wifiConnected = false;
@@ -366,20 +365,20 @@ static void mqtt_task(void *pv)
             ESP01_Status_t scanStatus = ESP01_LogAvailableNetworks(s_cfg.wifi_ssid, &targetSeen);
 
             if (scanStatus != ESP01_SUCCESS) {
-                printf("mqtt_task: Wi-Fi scan failed (%d), trying join anyway\n", (int)scanStatus);
+                LOG_ERR(APP_LAYER_MQTT, "Wi-Fi scan failed (%d), trying join anyway" , (int)scanStatus);
             } else if (!targetSeen) {
-                printf("mqtt_task: target Wi-Fi '%s' not visible, trying join anyway\n",
-                       s_cfg.wifi_ssid);
+                LOG_WARN(APP_LAYER_MQTT, "target Wi-Fi '%s' not visible, trying join anyway",
+                         s_cfg.wifi_ssid);
             }
 
-            printf("mqtt_task: joining Wi-Fi '%s'\n", s_cfg.wifi_ssid);
+            LOG_INFO(APP_LAYER_MQTT, "joining Wi-Fi '%s'" , s_cfg.wifi_ssid);
             if (ESP01_WifiConnect(s_cfg.wifi_ssid, s_cfg.wifi_password) == ESP01_SUCCESS) {
                 wifiConnected = true;
                 taskState = MQTT_TASK_STATE_TCP_CONNECT;
             } else {
                 wifiConnected = false;
-                printf("mqtt_task: Wi-Fi join failed, retry in %lu ms\n",
-                       (unsigned long)MQTT_TASK_WIFI_RETRY_MS);
+                LOG_ERR(APP_LAYER_MQTT, "Wi-Fi join failed, retry in %lu ms",
+                        (unsigned long)MQTT_TASK_WIFI_RETRY_MS);
                 osDelay(MQTT_TASK_WIFI_RETRY_MS);
             }
             break;
@@ -396,9 +395,8 @@ static void mqtt_task(void *pv)
                 tcpConnected = false;
             }
 
-            printf("mqtt_task: opening TCP to %s:%u\n",
-                   s_cfg.broker_host,
-                   s_cfg.broker_port);
+            LOG_INFO(APP_LAYER_MQTT, "opening TCP to %s:%u",
+                     s_cfg.broker_host, s_cfg.broker_port);
 
             if (ESP01_Connect(&s_netCtx, s_cfg.broker_host, s_cfg.broker_port) == ESP01_SUCCESS) {
                 tcpConnected = true;
@@ -407,8 +405,8 @@ static void mqtt_task(void *pv)
                 bool joined = false;
                 ESP01_Status_t ret = ESP01_IsWifiConnected(&joined);
                 wifiConnected = (ret == ESP01_SUCCESS) && joined;
-                printf("mqtt_task: TCP open failed, %s\n",
-                       wifiConnected ? "Wi-Fi still joined" : "Wi-Fi is not joined");
+                LOG_ERR(APP_LAYER_MQTT, "TCP open failed, %s",
+                        wifiConnected ? "Wi-Fi still joined" : "Wi-Fi is not joined");
                 taskState = wifiConnected ? MQTT_TASK_STATE_TCP_CONNECT
                                           : MQTT_TASK_STATE_WIFI_CONNECT;
                 osDelay(MQTT_TASK_TCP_RETRY_MS);
@@ -437,7 +435,7 @@ static void mqtt_task(void *pv)
             agentCfg.cleanStart = true;
 
             if (MqttAgent_Init(&agentCfg) != MQTT_AGENT_SUCCESS) {
-                printf("mqtt_task: MqttAgent_Init failed\n");
+                LOG_ERR(APP_LAYER_MQTT, "MqttAgent_Init failed");
                 (void)ESP01_Disconnect(&s_netCtx);
                 tcpConnected = false;
                 osDelay(MQTT_TASK_MQTT_RETRY_MS);
@@ -446,7 +444,7 @@ static void mqtt_task(void *pv)
             }
 
             if (MqttAgent_Start() != MQTT_AGENT_SUCCESS) {
-                printf("mqtt_task: MqttAgent_Start failed\n");
+                LOG_ERR(APP_LAYER_MQTT, "MqttAgent_Start failed");
                 (void)ESP01_Disconnect(&s_netCtx);
                 tcpConnected = false;
                 osDelay(MQTT_TASK_MQTT_RETRY_MS);
@@ -459,10 +457,10 @@ static void mqtt_task(void *pv)
 
             if (MqttAgent_WaitConnected(MQTT_TASK_CONNECTED_WAIT_MS) == MQTT_AGENT_SUCCESS) {
                 s_mqttConnected = true;
-                printf("mqtt_task: MQTT connected\n");
+                LOG_INFO(APP_LAYER_MQTT, "MQTT connected");
             } else {
                 s_mqttConnected = false;
-                printf("mqtt_task: MQTT not connected yet; agent is retrying\n");
+                LOG_INFO(APP_LAYER_MQTT, "MQTT not connected yet; agent is retrying");
             }
 
             taskState = MQTT_TASK_STATE_MQTT_RUN;
@@ -474,7 +472,7 @@ static void mqtt_task(void *pv)
             s_mqttConnected = (agentState == MQTT_AGENT_STATE_CONNECTED);
 
             if (s_netCtx.linkClosed || (agentState == MQTT_AGENT_STATE_STOPPED)) {
-                printf("mqtt_task: MQTT/TCP link stopped, reopening transport\n");
+                LOG_INFO(APP_LAYER_MQTT, "MQTT/TCP link stopped, reopening transport");
                 mqtt_task_stop_agent(&agentStarted);
                 (void)ESP01_Disconnect(&s_netCtx);
                 tcpConnected = false;
@@ -492,9 +490,9 @@ static void mqtt_task(void *pv)
             if (!configCallbacksReady && s_mqttConnected) {
                 if (mqtt_config_callbacks_init() == 0) {
                     configCallbacksReady = true;
-                    printf("mqtt_task: config subscriptions registered\n");
+                    LOG_INFO(APP_LAYER_MQTT, "config subscriptions registered");
                 } else {
-                    printf("mqtt_task: failed to register config subscriptions\n");
+                    LOG_ERR(APP_LAYER_MQTT, "failed to register config subscriptions");
                 }
             }
 
@@ -535,7 +533,7 @@ int mqtt_task_init(const MqttTaskConfig_t *cfg)
 
     s_threadId = osThreadNew(mqtt_task, NULL, &attr);
     if (s_threadId == NULL) {
-        printf("mqtt_task: failed to create thread\n");
+        LOG_ERR(APP_LAYER_MQTT, "failed to create thread");
         return -1;
     }
 
