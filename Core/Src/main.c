@@ -251,14 +251,19 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* MQTT task configuration */
+  /* NOTE: dev-only hardcoded provisioning. The broker ACL only lets *device*
+   * accounts read qc/config/# — using the server account (qc-server) silently
+   * denies the config subscriptions. client_id must match the device topic in
+   * acl.conf (qc/device/qc-stm32-001a2b3c/#). Move these to the Octo-SPI
+   * provisioning store before pilot. */
   static const MqttTaskConfig_t mqtt_cfg = {
       .wifi_ssid     = "TOPNET_5240",
       .wifi_password = "ts07xew7ay",
       .broker_host   = "192.168.1.28",
       .broker_port   = 1883,
-      .client_id     = "qc-stm32-001",
-      .username      = "qc-server",
-      .password      = "change-me",
+      .client_id     = "qc-stm32-001a2b3c",
+      .username      = "qc-device-001",
+      .password      = "device001",
   };
   mqtt_task_init(&mqtt_cfg);
   /* USER CODE END RTOS_THREADS */
