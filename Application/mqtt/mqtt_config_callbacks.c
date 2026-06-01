@@ -14,6 +14,22 @@
 /* Maximum allowed config JSON size (must fit in config_store sectors) */
 #define CONFIG_JSON_MAX_SIZE 4000
 
+/* Persisting config to Octo-SPI is DISABLED.
+ *
+ * Writing the OSPI while TouchGFX reads its assets from the same chip (via
+ * DMA2D) corrupts the OSPI controller mid-write: the program fails AND the
+ * subsequent re-enable of memory-mapped mode fails, leaving the flash
+ * unmapped and freezing the UI. Suspending the FreeRTOS scheduler does not
+ * stop the DMA2D/LTDC hardware, so it does not make the window safe.
+ *
+ * Config topics are RETAINED, so the device re-receives and re-applies them on
+ * every reconnect — the in-RAM model is sufficient for now. Re-enable only
+ * after TouchGFX assets are moved to internal flash (2 MB is plenty) or OSPI
+ * access is serialised with rendering. */
+#ifndef CONFIG_PERSIST_TO_FLASH
+#define CONFIG_PERSIST_TO_FLASH 0
+#endif
+
 /**
  * @brief Extract schema_version from JSON payload.
  *
@@ -80,12 +96,12 @@ void mqtt_callback_config_products(const char            *pTopicName,
     (void)pProps;
     (void)pUserCtx;
 
-    LOG_INFO(APP_LAYER_CFG, "received products config (%zu bytes)" , payloadLen);
+    LOG_INFO(APP_LAYER_CFG, "received products config (%u bytes)", (unsigned)payloadLen);
 
     /* Validate size */
     if (payloadLen > CONFIG_JSON_MAX_SIZE) {
-        LOG_ERR(APP_LAYER_CFG, "products config too large (%zu > %d)",
-                payloadLen, CONFIG_JSON_MAX_SIZE);
+        LOG_ERR(APP_LAYER_CFG, "products config too large (%u > %d)",
+                (unsigned)payloadLen, CONFIG_JSON_MAX_SIZE);
         return;
     }
 
@@ -97,15 +113,20 @@ void mqtt_callback_config_products(const char            *pTopicName,
 
     /* Extract and log schema version */
     uint16_t schema_version = extract_schema_version((const uint8_t *)pPayload, payloadLen);
-    LOG_INFO(APP_LAYER_CFG, "products schema_version = %u" , schema_version);
+    LOG_INFO(APP_LAYER_CFG, "products schema_version = %u", schema_version);
 
-    /* Store to flash */
+    /* Apply to the live model first — the critical path; never touches OSPI. */
+    if (config_parser_apply_products((const char *)pPayload, payloadLen) == 0) {
+        LOG_INFO(APP_LAYER_CFG, "products applied to model");
+    } else {
+        LOG_ERR(APP_LAYER_CFG, "products parse failed");
+    }
+
+#if CONFIG_PERSIST_TO_FLASH
     if (config_store_write_products((const uint8_t *)pPayload, (uint16_t)payloadLen) != 0) {
         LOG_ERR(APP_LAYER_CFG, "failed to persist products config");
         return;
     }
-
-    /* Update metadata */
     config_store_meta_t meta;
     if (config_store_read_meta(&meta) != 0) {
         memset(&meta, 0, sizeof(meta));
@@ -113,22 +134,14 @@ void mqtt_callback_config_products(const char            *pTopicName,
     meta.config_schema_version = schema_version;
     meta.products_size = (uint16_t)payloadLen;
     meta.products_timestamp_ms = osKernelGetTickCount();
-
     if (config_store_write_meta(&meta) != 0) {
         LOG_ERR(APP_LAYER_CFG, "failed to update metadata");
         return;
     }
-
-    LOG_INFO(APP_LAYER_CFG, "products config stored successfully");
-
-    /* Parse and apply into the live domain model (product list + defect types).
-     * The payload is bounded to CONFIG_JSON_MAX_SIZE above; config_parser uses
-     * static scratch buffers so this is safe from the agent task context. */
-    if (config_parser_apply_products((const char *)pPayload, payloadLen) == 0) {
-        LOG_INFO(APP_LAYER_CFG, "products applied to model");
-    } else {
-        LOG_ERR(APP_LAYER_CFG, "products parse failed");
-    }
+    LOG_INFO(APP_LAYER_CFG, "products config persisted");
+#else
+    (void)schema_version;
+#endif
 }
 
 void mqtt_callback_config_operators(const char            *pTopicName,
@@ -143,12 +156,12 @@ void mqtt_callback_config_operators(const char            *pTopicName,
     (void)pProps;
     (void)pUserCtx;
 
-    LOG_INFO(APP_LAYER_CFG, "received operators config (%zu bytes)" , payloadLen);
+    LOG_INFO(APP_LAYER_CFG, "received operators config (%u bytes)", (unsigned)payloadLen);
 
     /* Validate size */
     if (payloadLen > CONFIG_JSON_MAX_SIZE) {
-        LOG_ERR(APP_LAYER_CFG, "operators config too large (%zu > %d)",
-                payloadLen, CONFIG_JSON_MAX_SIZE);
+        LOG_ERR(APP_LAYER_CFG, "operators config too large (%u > %d)",
+                (unsigned)payloadLen, CONFIG_JSON_MAX_SIZE);
         return;
     }
 
@@ -160,15 +173,20 @@ void mqtt_callback_config_operators(const char            *pTopicName,
 
     /* Extract and log schema version */
     uint16_t schema_version = extract_schema_version((const uint8_t *)pPayload, payloadLen);
-    LOG_INFO(APP_LAYER_CFG, "operators schema_version = %u" , schema_version);
+    LOG_INFO(APP_LAYER_CFG, "operators schema_version = %u", schema_version);
 
-    /* Store to flash */
+    /* Apply to the live operator list first (used by login PIN validation). */
+    if (config_parser_apply_operators((const char *)pPayload, payloadLen) == 0) {
+        LOG_INFO(APP_LAYER_CFG, "operators applied to model");
+    } else {
+        LOG_ERR(APP_LAYER_CFG, "operators parse failed");
+    }
+
+#if CONFIG_PERSIST_TO_FLASH
     if (config_store_write_operators((const uint8_t *)pPayload, (uint16_t)payloadLen) != 0) {
         LOG_ERR(APP_LAYER_CFG, "failed to persist operators config");
         return;
     }
-
-    /* Update metadata */
     config_store_meta_t meta;
     if (config_store_read_meta(&meta) != 0) {
         memset(&meta, 0, sizeof(meta));
@@ -176,20 +194,14 @@ void mqtt_callback_config_operators(const char            *pTopicName,
     meta.config_schema_version = schema_version;
     meta.operators_size = (uint16_t)payloadLen;
     meta.operators_timestamp_ms = osKernelGetTickCount();
-
     if (config_store_write_meta(&meta) != 0) {
         LOG_ERR(APP_LAYER_CFG, "failed to update metadata");
         return;
     }
-
-    LOG_INFO(APP_LAYER_CFG, "operators config stored successfully");
-
-    /* Parse and apply into the operator list (used by login PIN validation). */
-    if (config_parser_apply_operators((const char *)pPayload, payloadLen) == 0) {
-        LOG_INFO(APP_LAYER_CFG, "operators applied to model");
-    } else {
-        LOG_ERR(APP_LAYER_CFG, "operators parse failed");
-    }
+    LOG_INFO(APP_LAYER_CFG, "operators config persisted");
+#else
+    (void)schema_version;
+#endif
 }
 
 int mqtt_config_callbacks_init(void)
