@@ -65,17 +65,23 @@
  * @brief Maximum milliseconds of transmit idleness before the library sends
  * a PINGREQ on its own. Capped by keepAliveSeconds if that is smaller.
  *
- * Default: 30000.
+ * Disabled here (set to ~max): the mqtt_task status heartbeat (every 30 s,
+ * well under the 60 s keep-alive) keeps the TX timer fresh, so the broker's
+ * keep-alive is satisfied without coreMQTT ever issuing a PINGREQ.
  */
- #define PACKET_TX_TIMEOUT_MS    ( 30000U )
+ #define PACKET_TX_TIMEOUT_MS    ( 0xFFFFFFFFUL )
 
 /**
  * @brief Maximum milliseconds of receive idleness before the library sends
  * a PINGREQ to verify the connection is alive.
  *
- * Default: 30000.
+ * Disabled here. The proactive RX-idle PINGREQ was the main churn source: on
+ * the flaky ESP-01 its tiny send intermittently fails, tripping a needless
+ * reconnect every ~30 s while the link was actually fine. Liveness is covered
+ * by the heartbeat send and the broker's own keep-alive timeout (a truly dead
+ * link surfaces as a send failure or a CLOSED URC).
  */
- #define PACKET_RX_TIMEOUT_MS    ( 30000U )
+ #define PACKET_RX_TIMEOUT_MS    ( 0xFFFFFFFFUL )
 
 /*-------------------- Transport I/O timing --------------------*/
 
