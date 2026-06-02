@@ -186,7 +186,10 @@ static int mqtt_task_publish_to_topic(const char *topic,
     return (ret == MQTT_AGENT_SUCCESS) ? 0 : -1;
 }
 
-static void mqtt_task_store_inspection(const inspection_msg_t *msg)
+/* Retained as an Octo-SPI overflow/reboot-survival backstop. Not used on the
+ * transient-disconnect path anymore: the in-memory queue keeps unpublished
+ * parts and retries them, which avoids the OSPI/TouchGFX rendering hazard. */
+static MQTT_TASK_MAYBE_UNUSED void mqtt_task_store_inspection(const inspection_msg_t *msg)
 {
     if (msg == NULL) {
         return;
@@ -350,7 +353,11 @@ static void mqtt_task_service_inspection_queue(void)
 
     mqtt_task_flush_persistent_inspections(topic);
 
-    while (inspection_queue_receive(&msg, 0U) == 0) {
+    /* Peek-publish-then-remove: a message is dropped from the queue only after
+     * the broker confirms it. A failed publish (e.g. the link dropped) leaves
+     * it queued in RAM and we retry on the next cycle / after reconnect — no
+     * loss, and a transient disconnect never has to touch Octo-SPI. */
+    while (inspection_queue_peek(&msg) == 0) {
         LOG_INFO(APP_LAYER_MQTT, "sending inspection (product=%d, pmp=%d, inj=%d)",
                  msg.product_id, msg.pmp_count, msg.inj_count);
 
@@ -363,17 +370,18 @@ static void mqtt_task_service_inspection_queue(void)
                                              msg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
-            LOG_ERR(APP_LAYER_MQTT, "failed to create inspection JSON payload");
+            LOG_ERR(APP_LAYER_MQTT, "dropping malformed inspection JSON payload");
+            (void)inspection_queue_receive(&msg, 0U); /* discard the bad item */
             continue;
         }
 
         if (mqtt_task_publish_to_topic(topic, json_payload, (size_t)len) != 0) {
-            LOG_ERR(APP_LAYER_MQTT, "failed to publish inspection; storing for retry");
-            mqtt_task_store_inspection(&msg);
-            break;
+            LOG_WARN(APP_LAYER_MQTT, "publish failed; keeping inspection queued for retry");
+            break; /* leave it queued; retried next cycle / after reconnect */
         }
 
-        LOG_INFO(APP_LAYER_MQTT, "inspection queued successfully");
+        (void)inspection_queue_receive(&msg, 0U); /* remove only after success */
+        LOG_INFO(APP_LAYER_MQTT, "inspection published");
     }
 }
 

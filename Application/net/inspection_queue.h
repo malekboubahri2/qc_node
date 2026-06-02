@@ -65,6 +65,20 @@ int inspection_queue_send(const inspection_msg_t* msg);
  */
 int inspection_queue_receive(inspection_msg_t* msg, uint32_t timeout_ms);
 
+/**
+ * @brief Copy the front inspection without removing it (non-blocking).
+ *
+ * Lets the MQTT task publish a message and only remove it (via
+ * inspection_queue_receive) after the broker confirms, so a failed publish
+ * keeps the message queued in RAM for the next retry instead of losing it or
+ * spilling it to Octo-SPI.
+ *
+ * @param msg   Pointer to store the peeked message.
+ *
+ * @return 0 on success, negative if the queue is empty.
+ */
+int inspection_queue_peek(inspection_msg_t* msg);
+
 #ifdef __cplusplus
 }
 #endif
