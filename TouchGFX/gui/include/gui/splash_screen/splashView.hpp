@@ -15,8 +15,12 @@ public:
 
 private:
     uint16_t m_tick_count;
-    /* 3 seconds at 60 Hz */
-    static constexpr uint16_t ADVANCE_TICKS = 3u * 60u;
+    /* Show the splash at least this long for branding, then advance as soon as
+     * the operator config has arrived. (~1 s at 60 Hz) */
+    static constexpr uint16_t MIN_TICKS = 1u * 60u;
+    /* Fall back to login even without config so a first boot with no cached
+     * config or no network never hangs on the splash. (~20 s at 60 Hz) */
+    static constexpr uint16_t MAX_TICKS = 20u * 60u;
 };
 
 #endif // SPLASHVIEW_HPP

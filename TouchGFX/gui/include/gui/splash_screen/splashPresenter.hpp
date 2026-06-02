@@ -25,6 +25,13 @@ public:
      */
     virtual void deactivate();
 
+    /**
+     * True once the operator list has arrived from the server. The splash uses
+     * this to hold until login has operators to validate against, instead of
+     * dropping into an empty login screen.
+     */
+    bool isConfigReady() const;
+
     virtual ~splashPresenter() {}
 
 private:
