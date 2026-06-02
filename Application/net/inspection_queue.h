@@ -10,22 +10,30 @@ extern "C" {
 
 /**
  * @file inspection_queue.h
- * @brief Queue for passing inspection events from UI to MQTT task.
+ * @brief Queue for passing a full part inspection from the UI to the MQTT task.
  */
 
+/* Max selectable defect types per category (12 user-defined + 1 "Autre"). */
+#define INSPECTION_MAX_DEFECTS 13
+
 /**
- * @brief Inspection message to be sent via MQTT.
- * 
- * This matches the format described in the documentation for schema_version 3.
+ * @brief One full part inspection (ADR per-part model, schema_version 4).
+ *
+ * Carries both categories' results for a single part: the selected
+ * defect_type_ids for PMP and for INJECTION. An empty list for a category
+ * means the part passed (OK) for that category. The server expands this into
+ * inspection_logs rows with the correct category.
  */
 typedef struct
 {
-    uint8_t  schema_version; /* = 3 (ADR-014) */
-    char     outcome[8];     /* "DEFECT" or "OK" */
+    uint8_t  schema_version;                  /* = 4 */
     int      product_id;
     int      operator_id;
-    int      defect_type_id; /* -1 if OK */
-    char     note[128];
+    int      pmp_defects[INSPECTION_MAX_DEFECTS];  /* defect_type_ids; empty = OK */
+    int      pmp_count;
+    int      inj_defects[INSPECTION_MAX_DEFECTS];
+    int      inj_count;
+    char     note[128];                        /* "Autre — préciser" free text */
 } inspection_msg_t;
 
 /**

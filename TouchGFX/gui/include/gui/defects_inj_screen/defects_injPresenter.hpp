@@ -25,11 +25,12 @@ public:
      */
     virtual void deactivate();
 
-    /* Called by the View when the operator confirms. buttonIndex is the 0-based
-     * grid position; isOther marks the "Autre — préciser" button. The real
-     * server-side defect_type_id is resolved from the product's INJECTION config. */
-    void logDefectInspection(int buttonIndex, bool isOther, const char* note);
-    void logOkInspection();
+    /* Called by the View on "Suivant"/"Pièce OK": commit the selected defect
+     * buttons (resolved to real defect_type_ids from the product's INJECTION
+     * config) into the Model's current part inspection. An empty selection
+     * means the part passed (OK) for INJECTION. */
+    void commitSelection(const bool* selected, int count, bool autreSelected,
+                         const char* note);
 
     /* Préciser keyboard round-trip. */
     void openKeyboardForPreciser();

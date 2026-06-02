@@ -196,10 +196,14 @@ static void mqtt_task_store_inspection(const inspection_msg_t *msg)
     memset(&pmsg, 0, sizeof(pmsg));
 
     pmsg.schema_version = msg->schema_version;
-    strncpy(pmsg.outcome, msg->outcome, sizeof(pmsg.outcome) - 1U);
     pmsg.product_id = msg->product_id;
     pmsg.operator_id = msg->operator_id;
-    pmsg.defect_type_id = msg->defect_type_id;
+    pmsg.pmp_count = msg->pmp_count;
+    for (int i = 0; (i < msg->pmp_count) && (i < INSPECTION_MAX_DEFECTS); ++i)
+        pmsg.pmp_defects[i] = msg->pmp_defects[i];
+    pmsg.inj_count = msg->inj_count;
+    for (int i = 0; (i < msg->inj_count) && (i < INSPECTION_MAX_DEFECTS); ++i)
+        pmsg.inj_defects[i] = msg->inj_defects[i];
     strncpy(pmsg.note, msg->note, sizeof(pmsg.note) - 1U);
     pmsg.timestamp = osKernelGetTickCount();
 
@@ -208,49 +212,64 @@ static void mqtt_task_store_inspection(const inspection_msg_t *msg)
     }
 }
 
-/* Build the qc/device/{id}/inspection payload (schema_version 3, ADR-014).
+/* Build the qc/device/{id}/inspection payload for one full part inspection
+ * (schema_version 4). Carries the selected defect_type_ids for each category;
+ * an empty array means the part passed (OK) for that category. device_id is
+ * required by the server. logged_at is omitted (no synced clock yet — the
+ * server stamps received_at). note is null when empty.
  *
- * Includes device_id (required by the server). defect_type_id is emitted only
- * for DEFECT outcomes (omitted/null for OK). note is null when empty. logged_at
- * is intentionally omitted: the device has no synced clock yet, so the server
- * stamps received_at as the authoritative time (SNTP is a pending follow-up).
+ *   {"schema_version":4,"device_id":"...","operator_id":N,"product_id":N,
+ *    "pmp_defect_type_ids":[..],"inj_defect_type_ids":[..],"note":null}
  *
  * @return payload length, or negative on overflow. */
-static int build_inspection_json(char *buf, size_t buflen,
-                                 const char *device_id,
-                                 int operator_id, int product_id,
-                                 const char *outcome, int defect_type_id,
-                                 const char *note)
+static int append_id_array(char *buf, size_t buflen, int n,
+                           const char *key, const int *ids, int count)
 {
-    int n = snprintf(buf, buflen,
-        "{\"schema_version\":3,\"device_id\":\"%s\",\"operator_id\":%d,"
-        "\"product_id\":%d,\"outcome\":\"%s\"",
-        device_id, operator_id, product_id, outcome);
-    if ((n < 0) || ((size_t)n >= buflen)) {
-        return -1;
-    }
-
-    if (defect_type_id >= 0) {
-        int k = snprintf(buf + n, buflen - (size_t)n,
-                         ",\"defect_type_id\":%d", defect_type_id);
-        if ((k < 0) || ((size_t)(n + k) >= buflen)) {
-            return -1;
-        }
+    int k = snprintf(buf + n, buflen - (size_t)n, "\"%s\":[", key);
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
+    n += k;
+    for (int i = 0; i < count; ++i) {
+        k = snprintf(buf + n, buflen - (size_t)n, (i == 0) ? "%d" : ",%d", ids[i]);
+        if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
         n += k;
     }
+    k = snprintf(buf + n, buflen - (size_t)n, "]");
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
+    return n + k;
+}
 
-    int k = (note && note[0] != '\0')
-                ? snprintf(buf + n, buflen - (size_t)n, ",\"note\":\"%s\"}", note)
-                : snprintf(buf + n, buflen - (size_t)n, ",\"note\":null}");
-    if ((k < 0) || ((size_t)(n + k) >= buflen)) {
-        return -1;
-    }
+static int build_full_inspection_json(char *buf, size_t buflen,
+                                      const char *device_id,
+                                      int operator_id, int product_id,
+                                      const int *pmp, int pmp_count,
+                                      const int *inj, int inj_count,
+                                      const char *note)
+{
+    int n = snprintf(buf, buflen,
+        "{\"schema_version\":4,\"device_id\":\"%s\",\"operator_id\":%d,\"product_id\":%d,",
+        device_id, operator_id, product_id);
+    if ((n < 0) || ((size_t)n >= buflen)) return -1;
+
+    n = append_id_array(buf, buflen, n, "pmp_defect_type_ids", pmp, pmp_count);
+    if (n < 0) return -1;
+
+    int k = snprintf(buf + n, buflen - (size_t)n, ",");
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
+    n += k;
+
+    n = append_id_array(buf, buflen, n, "inj_defect_type_ids", inj, inj_count);
+    if (n < 0) return -1;
+
+    k = (note && note[0] != '\0')
+            ? snprintf(buf + n, buflen - (size_t)n, ",\"note\":\"%s\"}", note)
+            : snprintf(buf + n, buflen - (size_t)n, ",\"note\":null}");
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
     return n + k;
 }
 
 static void mqtt_task_flush_persistent_inspections(const char *topic)
 {
-    char json_payload[256];
+    char json_payload[512];
 
     while (persistent_inspection_queue_has_pending()) {
         persistent_inspection_msg_t pmsg;
@@ -260,10 +279,12 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
             break;
         }
 
-        int len = build_inspection_json(json_payload, sizeof(json_payload),
-                                        s_cfg.client_id, pmsg.operator_id,
-                                        pmsg.product_id, pmsg.outcome,
-                                        pmsg.defect_type_id, pmsg.note);
+        int len = build_full_inspection_json(json_payload, sizeof(json_payload),
+                                             s_cfg.client_id, pmsg.operator_id,
+                                             pmsg.product_id,
+                                             pmsg.pmp_defects, pmsg.pmp_count,
+                                             pmsg.inj_defects, pmsg.inj_count,
+                                             pmsg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "failed to create stored inspection JSON payload");
@@ -330,14 +351,16 @@ static void mqtt_task_service_inspection_queue(void)
     mqtt_task_flush_persistent_inspections(topic);
 
     while (inspection_queue_receive(&msg, 0U) == 0) {
-        LOG_INFO(APP_LAYER_MQTT, "sending inspection (product=%d, outcome=%s)",
-                 msg.product_id, msg.outcome);
+        LOG_INFO(APP_LAYER_MQTT, "sending inspection (product=%d, pmp=%d, inj=%d)",
+                 msg.product_id, msg.pmp_count, msg.inj_count);
 
-        char json_payload[256];
-        int len = build_inspection_json(json_payload, sizeof(json_payload),
-                                        s_cfg.client_id, msg.operator_id,
-                                        msg.product_id, msg.outcome,
-                                        msg.defect_type_id, msg.note);
+        char json_payload[512];
+        int len = build_full_inspection_json(json_payload, sizeof(json_payload),
+                                             s_cfg.client_id, msg.operator_id,
+                                             msg.product_id,
+                                             msg.pmp_defects, msg.pmp_count,
+                                             msg.inj_defects, msg.inj_count,
+                                             msg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "failed to create inspection JSON payload");

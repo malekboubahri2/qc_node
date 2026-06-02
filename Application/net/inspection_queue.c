@@ -48,8 +48,8 @@ int inspection_queue_send(const inspection_msg_t* msg)
         return -1;
     }
     
-    printf("inspection_queue: sent inspection (product=%d, outcome=%s)\n",
-           msg->product_id, msg->outcome);
+    printf("inspection_queue: sent inspection (product=%d, pmp=%d, inj=%d)\n",
+           msg->product_id, msg->pmp_count, msg->inj_count);
     return 0;
 }
 
@@ -65,7 +65,7 @@ int inspection_queue_receive(inspection_msg_t* msg, uint32_t timeout_ms)
         return -1;
     }
     
-    printf("inspection_queue: received inspection (product=%d, outcome=%s)\n",
-           msg->product_id, msg->outcome);
+    printf("inspection_queue: received inspection (product=%d, pmp=%d, inj=%d)\n",
+           msg->product_id, msg->pmp_count, msg->inj_count);
     return 0;
 }

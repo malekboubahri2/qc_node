@@ -169,23 +169,10 @@ void defects_pmpView::onNextClicked(const ButtonBase& /*src*/, const touchgfx::C
     if (evt.getType() != touchgfx::ClickEvent::RELEASED)
         return;
 
-    bool anySelected = false;
-    for (int i = 0; i < DEFECT_COUNT; ++i)
-        if (m_selected[i]) { anySelected = true; break; }
-
-    if (anySelected)
-    {
-        for (int i = 0; i < DEFECT_COUNT; ++i)
-        {
-            if (m_selected[i])
-                presenter->logDefectInspection(i, (i == DEFECT_COUNT - 1),
-                    (i == DEFECT_COUNT - 1 && m_autre_selected) ? m_preciserText : "");
-        }
-    }
-    else
-    {
-        presenter->logOkInspection();
-    }
+    /* Commit this category's selection into the current part inspection
+     * (empty selection = "Pièce OK" for PMP). The whole part is published once
+     * on the summary screen. */
+    presenter->commitSelection(m_selected, DEFECT_COUNT, m_autre_selected, m_preciserText);
 
     application().gotodefects_injScreenNoTransition();
 }

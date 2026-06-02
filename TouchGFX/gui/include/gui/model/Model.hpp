@@ -55,11 +55,16 @@ public:
     void resetSessionDefectCount();
     int  getSessionDefectCount() const { return session_get_defect_count(); }
 
-    /* ----- Outgoing Inspection Management ----- */
-    void enqueueInspection(int product_id, int operator_id,
-                          const char* outcome,          // "DEFECT" | "OK"
-                          int defect_type_id,           // -1 if OK
-                          const char* note);
+    /* ----- Outgoing Inspection Management (per-part full inspection) -----
+     * The PMP and INJ screens each commit their selected defect_type_ids for
+     * the current part (empty = OK for that category). The summary screen then
+     * publishes one full inspection. */
+    void setCategoryDefects(int category,                // 0 = PMP, 1 = INJ
+                            const int* defectTypeIds, int count,
+                            const char* note);
+    void publishInspection();   // sends the accumulated part inspection (if any)
+    void clearInspection();     // discard the accumulated selections
+    int  getInspectionDefectCount() const; // PMP + INJ defects in the current part
     void publishSessionStart(int product_id, int operator_id);
 
     /* ----- Preciser Management ----- */
@@ -87,6 +92,15 @@ private:
 
     // Connection status tracking (would be set by event bits from app_events.h)
     bool m_connected;
+
+    // Accumulated current-part inspection (filled by the PMP/INJ screens,
+    // flushed by publishInspection() on the summary screen).
+    int  m_pmpDefects[INSPECTION_MAX_DEFECTS];
+    int  m_pmpCount;
+    int  m_injDefects[INSPECTION_MAX_DEFECTS];
+    int  m_injCount;
+    char m_inspectionNote[128];
+    bool m_inspectionPending;
 };
 
 #endif // MODEL_HPP

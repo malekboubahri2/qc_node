@@ -11,7 +11,12 @@ void summaryPresenter::activate()
 {
     int idx = model->getCurrentOperatorIdx();
     const char* name = (idx >= 0) ? model->getOperator(idx).name : "---";
-    view.setDisplayData(model->getSessionDefectCount(), name);
+
+    /* Read the part's defect count before publishing (publish clears it). */
+    view.setDisplayData(model->getInspectionDefectCount(), name);
+
+    /* Publish the full part inspection (PMP + INJ) exactly once. */
+    model->publishInspection();
 }
 
 void summaryPresenter::deactivate()

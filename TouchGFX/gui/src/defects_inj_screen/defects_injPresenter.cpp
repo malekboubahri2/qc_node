@@ -35,50 +35,44 @@ void defects_injPresenter::checkPendingPreciserText()
     }
 }
 
-void defects_injPresenter::logDefectInspection(int buttonIndex, bool isOther, const char* note)
+void defects_injPresenter::commitSelection(const bool* selected, int count,
+                                           bool autreSelected, const char* note)
 {
-    const int productId = model->getCurrentProductId();
-    int count = 0;
+    int typesCount = 0;
     const defect_type_t* types =
-        model->getDefectTypes(productId, DEFECT_CONFIG_CATEGORY_INJ, &count);
-    if (types == nullptr || count <= 0)
-        return;
+        model->getDefectTypes(model->getCurrentProductId(),
+                              DEFECT_CONFIG_CATEGORY_INJ, &typesCount);
 
-    /* Map the grid position to the real server-side defect_type_id. Regular
+    /* Resolve each selected grid button to its real defect_type_id. Regular
      * (non-fallback) types fill the first buttons in display order; the last
      * button is the "Autre" fallback. */
-    int defectTypeId = -1;
-    if (isOther)
+    int ids[INSPECTION_MAX_DEFECTS];
+    int n = 0;
+    for (int i = 0; i < count && n < INSPECTION_MAX_DEFECTS; ++i)
     {
-        for (int i = 0; i < count; ++i)
-            if (types[i].is_other) { defectTypeId = types[i].id; break; }
-    }
-    else
-    {
-        int regular = 0;
-        for (int i = 0; i < count; ++i)
+        if (!selected[i] || types == nullptr || typesCount <= 0)
+            continue;
+
+        int id = -1;
+        if (i == count - 1) /* "Autre" button */
         {
-            if (types[i].is_other) continue;
-            if (regular == buttonIndex) { defectTypeId = types[i].id; break; }
-            ++regular;
+            for (int k = 0; k < typesCount; ++k)
+                if (types[k].is_other) { id = types[k].id; break; }
         }
+        else
+        {
+            int regular = 0;
+            for (int k = 0; k < typesCount; ++k)
+            {
+                if (types[k].is_other) continue;
+                if (regular == i) { id = types[k].id; break; }
+                ++regular;
+            }
+        }
+        if (id >= 0)
+            ids[n++] = id;
     }
 
-    if (defectTypeId < 0)
-        return; /* no defect type configured for this button */
-
-    model->enqueueInspection(
-        productId,
-        model->getOperator(model->getCurrentOperatorIdx()).id,
-        "DEFECT", defectTypeId, note);
-}
-
-void defects_injPresenter::logOkInspection()
-{
-    /* Enqueue inspection event via Model → mqtt_task
-     * outcome="OK", no defect_type_id */
-    model->enqueueInspection(
-        model->getCurrentProductId(),
-        model->getOperator(model->getCurrentOperatorIdx()).id,
-        "OK", -1, "");
+    model->setCategoryDefects(DEFECT_CONFIG_CATEGORY_INJ, ids, n,
+                              autreSelected ? note : "");
 }

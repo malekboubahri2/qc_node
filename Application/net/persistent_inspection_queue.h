@@ -13,18 +13,24 @@ extern "C" {
  * @brief Persistent queue for storing inspection events when MQTT is disconnected.
  */
 
+/* Max selectable defect types per category (12 user-defined + 1 "Autre"). */
+#ifndef INSPECTION_MAX_DEFECTS
+#define INSPECTION_MAX_DEFECTS 13
+#endif
+
 /**
- * @brief Inspection message to be stored persistently.
- * 
- * This matches the format described in the documentation for schema_version 3.
+ * @brief One full part inspection stored persistently (schema_version 4).
+ *        Mirrors inspection_msg_t plus a creation timestamp.
  */
 typedef struct
 {
-    uint8_t  schema_version; /* = 3 (ADR-014) */
-    char     outcome[8];     /* "DEFECT" or "OK" */
+    uint8_t  schema_version; /* = 4 */
     int      product_id;
     int      operator_id;
-    int      defect_type_id; /* -1 if OK */
+    int      pmp_defects[INSPECTION_MAX_DEFECTS];
+    int      pmp_count;
+    int      inj_defects[INSPECTION_MAX_DEFECTS];
+    int      inj_count;
     char     note[128];
     uint32_t timestamp;      /* Time when inspection was created */
 } persistent_inspection_msg_t;

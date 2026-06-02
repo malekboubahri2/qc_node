@@ -26,16 +26,20 @@ extern "C" Model* getModelInstance()
 Model::Model()
     : modelListener(0),
       m_preciserOrigin(PreciserOrigin::NONE),
-      m_connected(false)
+      m_connected(false),
+      m_pmpCount(0),
+      m_injCount(0),
+      m_inspectionPending(false)
 {
     s_model_instance = this;
     m_preciserBuffer[0] = '\0';
-    
+    m_inspectionNote[0] = '\0';
+
     // Initialize domain modules
     operator_list_init();
     defect_config_init();
     session_init();
-    
+
     // Initialize inspection queue
     inspection_queue_init();
 }
@@ -183,53 +187,81 @@ const defect_type_t* Model::getDefectTypes(int product_id, int category,
     return nullptr;
 }
 
-void Model::enqueueInspection(int product_id, int operator_id,
-                             const char* outcome,          // "DEFECT" | "OK"
-                             int defect_type_id,           // -1 if OK
-                             const char* note)
+void Model::setCategoryDefects(int category, const int* defectTypeIds, int count,
+                               const char* note)
 {
-    // Create inspection message
+    int* dest = (category == 1) ? m_injDefects : m_pmpDefects;
+    int  n = 0;
+    for (int i = 0; i < count && n < INSPECTION_MAX_DEFECTS; ++i)
+    {
+        if (defectTypeIds[i] >= 0)
+            dest[n++] = defectTypeIds[i];
+    }
+    if (category == 1)
+        m_injCount = n;
+    else
+        m_pmpCount = n;
+
+    if (note != nullptr && note[0] != '\0')
+    {
+        strncpy(m_inspectionNote, note, sizeof(m_inspectionNote) - 1);
+        m_inspectionNote[sizeof(m_inspectionNote) - 1] = '\0';
+    }
+
+    m_inspectionPending = true;
+
+    printf("Model: committed %s selection (%d defects)\n",
+           (category == 1) ? "INJ" : "PMP", n);
+}
+
+void Model::publishInspection()
+{
+    if (!m_inspectionPending)
+        return;
+
     inspection_msg_t msg;
-    msg.schema_version = 3; // ADR-014
-    
-    // Copy outcome (ensure null-termination)
-    strncpy(msg.outcome, outcome ? outcome : "", sizeof(msg.outcome) - 1);
-    msg.outcome[sizeof(msg.outcome) - 1] = '\0';
-    
-    msg.product_id = product_id;
-    msg.operator_id = operator_id;
-    msg.defect_type_id = defect_type_id;
-    
-    // Copy note (ensure null-termination)
-    strncpy(msg.note, note ? note : "", sizeof(msg.note) - 1);
+    msg.schema_version = 4; // per-part full inspection
+    msg.product_id = getCurrentProductId();
+    msg.operator_id = getOperator(getCurrentOperatorIdx()).id;
+
+    msg.pmp_count = (m_pmpCount > INSPECTION_MAX_DEFECTS) ? INSPECTION_MAX_DEFECTS : m_pmpCount;
+    for (int i = 0; i < msg.pmp_count; ++i)
+        msg.pmp_defects[i] = m_pmpDefects[i];
+
+    msg.inj_count = (m_injCount > INSPECTION_MAX_DEFECTS) ? INSPECTION_MAX_DEFECTS : m_injCount;
+    for (int i = 0; i < msg.inj_count; ++i)
+        msg.inj_defects[i] = m_injDefects[i];
+
+    strncpy(msg.note, m_inspectionNote, sizeof(msg.note) - 1);
     msg.note[sizeof(msg.note) - 1] = '\0';
-    
-    // Send to inspection queue
+
     inspection_queue_send(&msg);
-    
-    printf("Model: enqueued inspection (product=%d, operator=%d, outcome=%s, defect_type=%d, note=%s)\n",
-           product_id, operator_id, outcome ? outcome : "NULL", defect_type_id, note ? note : "NULL");
+
+    printf("Model: published inspection (product=%d, operator=%d, pmp=%d, inj=%d)\n",
+           msg.product_id, msg.operator_id, msg.pmp_count, msg.inj_count);
+
+    clearInspection();
+}
+
+void Model::clearInspection()
+{
+    m_pmpCount = 0;
+    m_injCount = 0;
+    m_inspectionNote[0] = '\0';
+    m_inspectionPending = false;
+}
+
+int Model::getInspectionDefectCount() const
+{
+    return m_pmpCount + m_injCount;
 }
 
 void Model::publishSessionStart(int product_id, int operator_id)
 {
-    // Create session start message (similar to inspection but without defect info)
-    // For simplicity, we're reusing the inspection message structure
-    // In a real implementation, we might have a separate message type
-    inspection_msg_t msg;
-    msg.schema_version = 3; // ADR-014
-    strncpy(msg.outcome, "SESSION_START", sizeof(msg.outcome) - 1);
-    msg.outcome[sizeof(msg.outcome) - 1] = '\0';
-    msg.product_id = product_id;
-    msg.operator_id = operator_id;
-    msg.defect_type_id = 0; // Not used for session start
-    msg.note[0] = '\0'; // Empty note
-    
-    // Send to inspection queue
-    inspection_queue_send(&msg);
-    
-    printf("Model: published session start (product=%d, operator=%d)\n",
-           product_id, operator_id);
+    /* The session topic is not wired up yet; the per-part inspection carries
+     * operator_id + product_id, which is sufficient for the PoC. */
+    (void)product_id;
+    (void)operator_id;
 }
 
 bool Model::isConnected() const
