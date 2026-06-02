@@ -841,13 +841,18 @@ static void agent_task( void *pv )
 
             s_retryCount++;
 
-            if( ( MQTT_AGENT_RECONNECT_MAX_RETRIES > 0U )
-                && ( s_retryCount >= MQTT_AGENT_RECONNECT_MAX_RETRIES ) )
+            /* The TCP link (over the ESP-01) is owned by mqtt_task. Retrying
+             * MQTT_Connect on the same flaky/half-open socket rarely recovers,
+             * so after a few attempts stop and let mqtt_task tear down the
+             * ESP-01 connection and start a fresh agent over a new socket. */
+            if( s_retryCount >= 4U )
             {
-                MQTT_AGENT_LOG( "Initial connect: max retries reached. Stopping." );
+                MQTT_AGENT_LOG( "Initial connect failed %lu times — stopping for transport rebuild",
+                                ( unsigned long )s_retryCount );
                 set_state( MQTT_AGENT_STATE_STOPPED );
                 s_agentTask = NULL;
                 vTaskDelete( NULL );
+                return;
             }
 
             MQTT_AGENT_LOG( "Initial connect failed. Retry in %lu ms.", s_backoffMs );
