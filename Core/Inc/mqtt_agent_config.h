@@ -54,9 +54,16 @@
  * @brief Size of the network buffer shared by all coreMQTT serialise /
  *        deserialise operations. Must fit the largest expected MQTT packet
  *        including all MQTT 5 property fields.
+ *
+ * This also bounds MQTT_AGENT_MAX_PACKET_SIZE, which is advertised to the
+ * broker as the client's Maximum Packet Size: the broker will NOT deliver a
+ * packet larger than this. The retained qc/config/products payload grows with
+ * the number of products and defect types (a single product with the full
+ * SVI-PRD-17 taxonomy is ~1.7 KB), so this must comfortably exceed it or the
+ * broker silently withholds the config. 4 KB matches CONFIG_JSON_MAX_SIZE.
  */
 #ifndef MQTT_AGENT_NETWORK_BUF_SIZE
-#define MQTT_AGENT_NETWORK_BUF_SIZE         1024U
+#define MQTT_AGENT_NETWORK_BUF_SIZE         4096U
 #endif
 
 /**
