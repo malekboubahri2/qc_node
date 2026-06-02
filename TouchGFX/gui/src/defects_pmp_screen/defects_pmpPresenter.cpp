@@ -3,6 +3,7 @@
 #include <gui/model/Model.hpp>
 #include <gui/common/FrontendApplication.hpp>
 #include <touchgfx/Application.hpp>
+#include <stdio.h>
 
 defects_pmpPresenter::defects_pmpPresenter(defects_pmpView& v)
     : view(v)
@@ -72,6 +73,11 @@ void defects_pmpPresenter::commitSelection(const bool* selected, int count,
         if (id >= 0)
             ids[n++] = id;
     }
+
+    /* Diagnostic: if typesCount is 0 the product/defect config was not loaded
+     * yet, so selected buttons resolve to nothing (commit shows 0). */
+    printf("commitSelection PMP: product=%d typesLoaded=%d -> %d ids\n",
+           model->getCurrentProductId(), typesCount, n);
 
     model->setCategoryDefects(DEFECT_CONFIG_CATEGORY_PMP, ids, n,
                               autreSelected ? note : "");
