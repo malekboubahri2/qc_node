@@ -30,6 +30,9 @@
 #define MQTT_TASK_CONNECTED_WAIT_MS   5000U
 #define MQTT_TASK_PUBLISH_WAIT_MS     1000U
 #define MQTT_TASK_STATUS_PERIOD_MS    30000U
+/* Spacing between back-to-back publishes when draining a backlog, so a burst
+ * (e.g. after reconnect) does not overrun the ESP-01. */
+#define MQTT_TASK_PUBLISH_PACE_MS     30U
 
 static MqttTaskConfig_t s_cfg;
 static osThreadId_t     s_threadId = NULL;
@@ -382,6 +385,8 @@ static void mqtt_task_service_inspection_queue(void)
 
         (void)inspection_queue_receive(&msg, 0U); /* remove only after success */
         LOG_INFO(APP_LAYER_MQTT, "inspection published");
+
+        osDelay(MQTT_TASK_PUBLISH_PACE_MS); /* pace a backlog drain */
     }
 }
 

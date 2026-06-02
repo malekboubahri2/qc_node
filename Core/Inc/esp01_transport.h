@@ -155,6 +155,28 @@ extern UART_HandleTypeDef huart2;
 #define ESP01_CIPSEND_PROMPT_TIMEOUT_MS   2000U
 #endif
 
+/**
+ * @brief Settle delay (ms) before issuing AT+CIPSEND.
+ *
+ * Gives the module a moment after prior traffic before a new send transaction,
+ * so send reliability no longer depends on the incidental timing of verbose AT
+ * logging. Increase if CIPSEND prompts are missed; 0 disables.
+ */
+#ifndef ESP01_CIPSEND_PRE_SETTLE_MS
+#define ESP01_CIPSEND_PRE_SETTLE_MS       2U
+#endif
+
+/**
+ * @brief Settle delay (ms) after the ">" prompt, before pushing payload bytes.
+ *
+ * The module needs a short moment after emitting ">" before it reliably latches
+ * the raw payload. Previously this delay was only provided as a side effect of
+ * per-AT-command log prints, so the link worked at DEBUG but failed at INFO.
+ */
+#ifndef ESP01_CIPSEND_PROMPT_SETTLE_MS
+#define ESP01_CIPSEND_PROMPT_SETTLE_MS    5U
+#endif
+
 /** Timeout (ms) waiting for "SEND OK" after pushing payload data. */
 #ifndef ESP01_SEND_OK_TIMEOUT_MS
 #define ESP01_SEND_OK_TIMEOUT_MS    5000U

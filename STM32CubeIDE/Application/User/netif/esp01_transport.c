@@ -7,6 +7,7 @@
 
 #include "esp01_transport.h"
 #include "app_log.h"
+#include "cmsis_os2.h"  /* osDelay — yield instead of busy-waiting on settles */
 
 #include <stdio.h>
 #include <string.h>
@@ -1282,6 +1283,12 @@ int32_t esp01_send( NetworkContext_t *pNetworkContext,
     /* Step 1 — announce the number of bytes we want to send. */
     snprintf( cmd, sizeof( cmd ), "AT+CIPSEND=%u", ( unsigned )bytesToSend );
 
+#if ( ESP01_CIPSEND_PRE_SETTLE_MS > 0U )
+    /* Settle after prior traffic so reliability is not coupled to log timing.
+     * osDelay yields to the scheduler; this runs in the agent task. */
+    osDelay( ESP01_CIPSEND_PRE_SETTLE_MS );
+#endif
+
     ret = at_send_cmd( pNetworkContext->pUart, cmd );
     if( ret != ESP01_SUCCESS )
     {
@@ -1295,6 +1302,14 @@ int32_t esp01_send( NetworkContext_t *pNetworkContext,
         /* Module not ready; return 0 so the caller can retry. */
         return 0;
     }
+
+#if ( ESP01_CIPSEND_PROMPT_SETTLE_MS > 0U )
+    /* Let the module latch into raw-receive mode before we blast the payload.
+     * This is the explicit replacement for the old reliance on log-print delays.
+     * osDelay yields; the module waits for the data after ">", so a slightly
+     * longer settle (if preempted) is harmless. */
+    osDelay( ESP01_CIPSEND_PROMPT_SETTLE_MS );
+#endif
 
     /* Step 3 — transmit the raw payload bytes (no CR/LF added). */
     HAL_StatusTypeDef halStatus;
