@@ -102,7 +102,7 @@ extern UART_HandleTypeDef huart2;
  *        esp01_recv() transport callback (bytes).  Must be a power-of-two.
  */
 #ifndef ESP01_RX_RING_SIZE
-#define ESP01_RX_RING_SIZE          1024U
+#define ESP01_RX_RING_SIZE          4096U
 #endif
 
 /** Maximum length of a single AT command string (including CR/LF). */

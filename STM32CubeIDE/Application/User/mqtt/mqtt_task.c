@@ -2,6 +2,7 @@
 #include "esp01_transport.h"
 #include "mqtt_agent.h"
 #include "mqtt_topics.h"
+#include "mqtt_payloads.h"
 #include "mqtt/mqtt_config_callbacks.h"
 #include "net/inspection_queue.h"
 #include "net/persistent_inspection_queue.h"
@@ -28,12 +29,14 @@
 #define MQTT_TASK_AGENT_STOP_MS       2000U
 #define MQTT_TASK_CONNECTED_WAIT_MS   5000U
 #define MQTT_TASK_PUBLISH_WAIT_MS     1000U
+#define MQTT_TASK_STATUS_PERIOD_MS    30000U
 
 static MqttTaskConfig_t s_cfg;
 static osThreadId_t     s_threadId = NULL;
 static NetworkContext_t s_netCtx;
 static TransportInterface_t s_transport;
 static bool s_mqttConnected = false;
+static uint32_t s_lastStatusMs = 0U;  /* 0 = publish on first MQTT_RUN tick */
 
 static config_store_credentials_t s_loadedCreds;
 
@@ -277,6 +280,38 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
     }
 }
 
+/* Publish a status heartbeat (qc/device/{id}/status, QoS 0). Besides registering
+ * the device server-side, the periodic traffic keeps coreMQTT's keep-alive
+ * timer fresh so an otherwise-idle device never sends a PINGREQ and so never
+ * trips MQTTKeepAliveTimeout. */
+static void mqtt_task_publish_status(void)
+{
+    if (!s_mqttConnected || (s_cfg.client_id == NULL)) {
+        return;
+    }
+
+    char topic[96];
+    int tn = snprintf(topic, sizeof(topic), MQTT_TOPIC_DEVICE_STATUS_FMT, s_cfg.client_id);
+    if ((tn <= 0) || (tn >= (int)sizeof(topic))) {
+        return;
+    }
+
+    char payload[256];
+    int n = mqtt_serialize_status(payload, sizeof(payload), s_cfg.client_id,
+                                  (uint32_t)osKernelGetTickCount(),
+                                  0U,  /* config_version  */
+                                  0U,  /* operator_version */
+                                  0U,  /* queue_depth      */
+                                  0,   /* wifi_rssi        */
+                                  0U); /* mqtt_reconnects  */
+    if (n <= 0) {
+        return;
+    }
+
+    (void)MqttAgent_Publish(topic, (uint16_t)tn, payload, (size_t)n,
+                            MQTTQoS0, false, NULL, 0U);
+}
+
 static void mqtt_task_service_inspection_queue(void)
 {
     inspection_msg_t msg;
@@ -484,6 +519,7 @@ static void mqtt_task(void *pv)
 
             agentStarted = true;
             configCallbacksReady = false;
+            s_lastStatusMs = 0U;  /* publish a status heartbeat right after (re)connect */
 
             if (MqttAgent_WaitConnected(MQTT_TASK_CONNECTED_WAIT_MS) == MQTT_AGENT_SUCCESS) {
                 s_mqttConnected = true;
@@ -524,6 +560,13 @@ static void mqtt_task(void *pv)
                 } else {
                     LOG_ERR(APP_LAYER_MQTT, "failed to register config subscriptions");
                 }
+            }
+
+            uint32_t nowMs = (uint32_t)osKernelGetTickCount();
+            if ((s_lastStatusMs == 0U) ||
+                ((nowMs - s_lastStatusMs) >= MQTT_TASK_STATUS_PERIOD_MS)) {
+                mqtt_task_publish_status();
+                s_lastStatusMs = nowMs;
             }
 
             mqtt_task_service_inspection_queue();
