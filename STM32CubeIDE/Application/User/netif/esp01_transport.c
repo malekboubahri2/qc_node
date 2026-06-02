@@ -52,6 +52,10 @@ typedef struct
 
 static RingBuffer_t esp01RxRing;
 
+/* Set by esp01_rx_flush(); makes esp01_recv drop any half-parsed +IPD framing
+ * carried over from a previous TCP connection. */
+static volatile bool esp01RecvResetReq = false;
+
 /* ── Active NetworkContext (set in ESP01_Init, used by the ISR) ─────────────── */
 static NetworkContext_t *pActiveCtx = NULL;
 
@@ -139,6 +143,22 @@ static inline bool ring_pop( RingBuffer_t *r, uint8_t *pByte )
 static inline uint16_t ring_available( const RingBuffer_t *r )
 {
     return ( uint16_t )( ( r->head - r->tail ) & ( ESP01_RX_RING_SIZE - 1U ) );
+}
+
+/**
+ * @brief Discard all buffered RX bytes and reset the recv framing state.
+ *
+ * Call when (re)opening a TCP connection so stale bytes from the previous
+ * session — e.g. a PINGRESP that arrived just before the link dropped — cannot
+ * be misread as the new connection's CONNACK.
+ */
+static void esp01_rx_flush( void )
+{
+    __disable_irq();
+    esp01RxRing.head = 0U;
+    esp01RxRing.tail = 0U;
+    __enable_irq();
+    esp01RecvResetReq = true;  /* esp01_recv resets its +IPD state machine */
 }
 
 static void at_drain_rx_until_quiet( const char *pReason,
@@ -1038,6 +1058,10 @@ ESP01_Status_t ESP01_Connect( NetworkContext_t *pCtx,
     /* Consume trailing "OK". */
     at_wait_token( "OK", ESP01_AT_TIMEOUT_MS );
 
+    /* Start the new session with an empty RX buffer so leftover bytes from the
+     * previous connection (e.g. a stale PINGRESP) are not read as the CONNACK. */
+    esp01_rx_flush();
+
     pCtx->connected  = true;
     pCtx->linkClosed = false;
 
@@ -1119,6 +1143,16 @@ int32_t esp01_recv( NetworkContext_t *pNetworkContext,
     {
         pNetworkContext->connected = false;
         return -1;   /* signal disconnect to coreMQTT */
+    }
+
+    /* Drop any half-parsed +IPD framing carried over from a previous session
+     * (esp01_rx_flush() requested a reset on (re)connect). */
+    if( esp01RecvResetReq )
+    {
+        state         = ST_IDLE;
+        hdrLen        = 0U;
+        payloadRemain = 0;
+        esp01RecvResetReq = false;
     }
 
     /* ── No data available — return 0 so coreMQTT can retry ─────────────────── */

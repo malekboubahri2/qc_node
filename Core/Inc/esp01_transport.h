@@ -94,7 +94,7 @@ extern UART_HandleTypeDef huart2;
  * bytes into esp01RxRing and re-arms DMA. Must be a power-of-two >= 64.
  */
 #ifndef ESP01_RX_DMA_BUF_SIZE
-#define ESP01_RX_DMA_BUF_SIZE       256U
+#define ESP01_RX_DMA_BUF_SIZE       1024U
 #endif
 
 /**
