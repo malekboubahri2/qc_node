@@ -702,6 +702,9 @@ static bool stop_if_requested( void )
     return true;
 }
 
+/* Retained for reference; the agent no longer self-reconnects (mqtt_task owns
+ * transport rebuild and re-subscribes via mqtt_config_callbacks_init). */
+__attribute__((unused))
 static void resubscribe_all( void )
 {
     for( uint32_t i = 0U; i < MQTT_AGENT_MAX_SUBSCRIPTIONS; i++ )
@@ -867,49 +870,24 @@ static void agent_task( void *pv )
         /* 2. Drive coreMQTT: keep-alive, acks, inbound delivery. */
         MQTTStatus_t loopRet = MQTT_ProcessLoop( &s_mqttCtx );
 
-        /* 3. Detect and handle disconnection. */
+        /* 3. On any error, hand back to the transport owner (mqtt_task).
+         *
+         * coreMQTT cannot reconnect by itself here: the "socket" is a TCP
+         * connection over the ESP-01 that only mqtt_task can rebuild. Once the
+         * link drops (or a send/keep-alive fails), calling MQTT_Connect on the
+         * dead context just returns MQTTStatusConnected / DisconnectPending and
+         * spins forever. So stop the agent; mqtt_task observes
+         * MQTT_AGENT_STATE_STOPPED, tears down the ESP-01 TCP link, and starts a
+         * fresh agent over a new connection (MqttAgent_Init re-subscribes via
+         * mqtt_config_callbacks_init). */
         if( ( loopRet != MQTTSuccess ) &&
             ( loopRet != MQTTNeedMoreBytes ) )
         {
-            MQTT_AGENT_LOG( "ProcessLoop error %d — reconnecting...", loopRet );
-            set_state( MQTT_AGENT_STATE_RECONNECTING );
-
-            for( ;; )
-            {
-                if( stop_if_requested() ) { return; }
-                vTaskDelay( pdMS_TO_TICKS( s_backoffMs ) );
-                if( stop_if_requested() ) { return; }
-
-                s_backoffMs = ( s_backoffMs * 2U < MQTT_AGENT_RECONNECT_DELAY_MAX_MS )
-                                  ? s_backoffMs * 2U
-                                  : MQTT_AGENT_RECONNECT_DELAY_MAX_MS;
-
-                s_retryCount++;
-
-                if( ( MQTT_AGENT_RECONNECT_MAX_RETRIES > 0U )
-                    && ( s_retryCount >= MQTT_AGENT_RECONNECT_MAX_RETRIES ) )
-                {
-                    MQTT_AGENT_LOG( "Max reconnect retries reached. Stopping." );
-                    set_state( MQTT_AGENT_STATE_STOPPED );
-                    s_agentTask = NULL;
-                    vTaskDelete( NULL );
-                }
-
-                set_state( MQTT_AGENT_STATE_CONNECTING );
-                MQTTStatus_t rc = do_connect();
-
-                if( rc == MQTTSuccess )
-                {
-                    s_backoffMs  = MQTT_AGENT_RECONNECT_DELAY_BASE_MS;
-                    s_retryCount = 0U;
-                    resubscribe_all();
-                    set_state( MQTT_AGENT_STATE_CONNECTED );
-                    break;
-                }
-
-                MQTT_AGENT_LOG( "Reconnect attempt %lu failed. Next in %lu ms.",
-                                s_retryCount, s_backoffMs );
-            }
+            MQTT_AGENT_LOG( "ProcessLoop error %d — stopping for transport rebuild", loopRet );
+            set_state( MQTT_AGENT_STATE_STOPPED );
+            s_agentTask = NULL;
+            vTaskDelete( NULL );
+            return; /* unreachable — satisfies the compiler */
         }
     }
 }
@@ -1014,6 +992,14 @@ MqttAgentStatus_t MqttAgent_Start( void )
 
 MqttAgentStatus_t MqttAgent_Stop( uint32_t timeoutMs )
 {
+    /* If the agent already stopped itself (e.g. after a transport error handed
+     * control back to mqtt_task), there is no task to signal — report success
+     * so the caller proceeds straight to rebuilding the connection. */
+    if( ( s_agentTask == NULL ) || ( s_state == MQTT_AGENT_STATE_STOPPED ) )
+    {
+        return MQTT_AGENT_SUCCESS;
+    }
+
     MqttCommand_t *pCmd = pool_alloc();
     if( pCmd == NULL ) return MQTT_AGENT_ERR_QUEUE;
 
