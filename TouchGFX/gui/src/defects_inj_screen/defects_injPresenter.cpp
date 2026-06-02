@@ -35,12 +35,40 @@ void defects_injPresenter::checkPendingPreciserText()
     }
 }
 
-void defects_injPresenter::logDefectInspection(int defectTypeId, const char* note)
+void defects_injPresenter::logDefectInspection(int buttonIndex, bool isOther, const char* note)
 {
-    /* Enqueue inspection event via Model → mqtt_task
-     * outcome="DEFECT", defect_type_id=defectTypeId, note=note */
+    const int productId = model->getCurrentProductId();
+    int count = 0;
+    const defect_type_t* types =
+        model->getDefectTypes(productId, DEFECT_CONFIG_CATEGORY_INJ, &count);
+    if (types == nullptr || count <= 0)
+        return;
+
+    /* Map the grid position to the real server-side defect_type_id. Regular
+     * (non-fallback) types fill the first buttons in display order; the last
+     * button is the "Autre" fallback. */
+    int defectTypeId = -1;
+    if (isOther)
+    {
+        for (int i = 0; i < count; ++i)
+            if (types[i].is_other) { defectTypeId = types[i].id; break; }
+    }
+    else
+    {
+        int regular = 0;
+        for (int i = 0; i < count; ++i)
+        {
+            if (types[i].is_other) continue;
+            if (regular == buttonIndex) { defectTypeId = types[i].id; break; }
+            ++regular;
+        }
+    }
+
+    if (defectTypeId < 0)
+        return; /* no defect type configured for this button */
+
     model->enqueueInspection(
-        model->getCurrentProductId(),
+        productId,
         model->getOperator(model->getCurrentOperatorIdx()).id,
         "DEFECT", defectTypeId, note);
 }

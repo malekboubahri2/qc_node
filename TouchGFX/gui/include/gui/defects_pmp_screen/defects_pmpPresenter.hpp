@@ -25,8 +25,10 @@ public:
      */
     virtual void deactivate();
 
-    /* Called by the View when the operator confirms. */
-    void logDefectInspection(int defectTypeId, const char* note);
+    /* Called by the View when the operator confirms. buttonIndex is the 0-based
+     * grid position; isOther marks the "Autre — préciser" button. The real
+     * server-side defect_type_id is resolved from the product's PMP config. */
+    void logDefectInspection(int buttonIndex, bool isOther, const char* note);
     void logOkInspection();
 
     /* Préciser keyboard round-trip. */

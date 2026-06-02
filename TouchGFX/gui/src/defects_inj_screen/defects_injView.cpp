@@ -179,7 +179,7 @@ void defects_injView::onNextClicked(const ButtonBase& /*src*/, const touchgfx::C
         for (int i = 0; i < DEFECT_COUNT; ++i)
         {
             if (m_selected[i])
-                presenter->logDefectInspection(i + 1,
+                presenter->logDefectInspection(i, (i == DEFECT_COUNT - 1),
                     (i == DEFECT_COUNT - 1 && m_autre_selected) ? m_preciserText : "");
         }
     }
