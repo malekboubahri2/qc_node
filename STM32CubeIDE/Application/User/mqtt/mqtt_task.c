@@ -205,6 +205,46 @@ static void mqtt_task_store_inspection(const inspection_msg_t *msg)
     }
 }
 
+/* Build the qc/device/{id}/inspection payload (schema_version 3, ADR-014).
+ *
+ * Includes device_id (required by the server). defect_type_id is emitted only
+ * for DEFECT outcomes (omitted/null for OK). note is null when empty. logged_at
+ * is intentionally omitted: the device has no synced clock yet, so the server
+ * stamps received_at as the authoritative time (SNTP is a pending follow-up).
+ *
+ * @return payload length, or negative on overflow. */
+static int build_inspection_json(char *buf, size_t buflen,
+                                 const char *device_id,
+                                 int operator_id, int product_id,
+                                 const char *outcome, int defect_type_id,
+                                 const char *note)
+{
+    int n = snprintf(buf, buflen,
+        "{\"schema_version\":3,\"device_id\":\"%s\",\"operator_id\":%d,"
+        "\"product_id\":%d,\"outcome\":\"%s\"",
+        device_id, operator_id, product_id, outcome);
+    if ((n < 0) || ((size_t)n >= buflen)) {
+        return -1;
+    }
+
+    if (defect_type_id >= 0) {
+        int k = snprintf(buf + n, buflen - (size_t)n,
+                         ",\"defect_type_id\":%d", defect_type_id);
+        if ((k < 0) || ((size_t)(n + k) >= buflen)) {
+            return -1;
+        }
+        n += k;
+    }
+
+    int k = (note && note[0] != '\0')
+                ? snprintf(buf + n, buflen - (size_t)n, ",\"note\":\"%s\"}", note)
+                : snprintf(buf + n, buflen - (size_t)n, ",\"note\":null}");
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) {
+        return -1;
+    }
+    return n + k;
+}
+
 static void mqtt_task_flush_persistent_inspections(const char *topic)
 {
     char json_payload[256];
@@ -217,15 +257,10 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
             break;
         }
 
-        int len = snprintf(json_payload,
-                           sizeof(json_payload),
-                           "{\"schema_version\":%d,\"outcome\":\"%s\",\"product_id\":%d,\"operator_id\":%d,\"defect_type_id\":%d,\"note\":\"%s\"}",
-                           pmsg.schema_version,
-                           pmsg.outcome,
-                           pmsg.product_id,
-                           pmsg.operator_id,
-                           pmsg.defect_type_id,
-                           pmsg.note);
+        int len = build_inspection_json(json_payload, sizeof(json_payload),
+                                        s_cfg.client_id, pmsg.operator_id,
+                                        pmsg.product_id, pmsg.outcome,
+                                        pmsg.defect_type_id, pmsg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "failed to create stored inspection JSON payload");
@@ -264,15 +299,10 @@ static void mqtt_task_service_inspection_queue(void)
                  msg.product_id, msg.outcome);
 
         char json_payload[256];
-        int len = snprintf(json_payload,
-                           sizeof(json_payload),
-                           "{\"schema_version\":%d,\"outcome\":\"%s\",\"product_id\":%d,\"operator_id\":%d,\"defect_type_id\":%d,\"note\":\"%s\"}",
-                           msg.schema_version,
-                           msg.outcome,
-                           msg.product_id,
-                           msg.operator_id,
-                           msg.defect_type_id,
-                           msg.note);
+        int len = build_inspection_json(json_payload, sizeof(json_payload),
+                                        s_cfg.client_id, msg.operator_id,
+                                        msg.product_id, msg.outcome,
+                                        msg.defect_type_id, msg.note);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "failed to create inspection JSON payload");
