@@ -34,6 +34,7 @@ typedef struct
     int      inj_defects[INSPECTION_MAX_DEFECTS];
     int      inj_count;
     char     note[128];                        /* "Autre — préciser" free text */
+    uint32_t logged_at_utc;                    /* UTC epoch at inspection time; 0 if clock not synced */
 } inspection_msg_t;
 
 /**

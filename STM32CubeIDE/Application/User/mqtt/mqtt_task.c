@@ -7,6 +7,7 @@
 #include "net/inspection_queue.h"
 #include "net/persistent_inspection_queue.h"
 #include "persistence/config_store.h"
+#include "time/time_source.h"
 
 #include "cmsis_os2.h"
 
@@ -40,6 +41,13 @@ static NetworkContext_t s_netCtx;
 static TransportInterface_t s_transport;
 static bool s_mqttConnected = false;
 static uint32_t s_lastStatusMs = 0U;  /* 0 = publish on first MQTT_RUN tick */
+static bool s_sntpConfigured = false;
+
+#ifndef MQTT_TASK_SNTP_SERVER
+#define MQTT_TASK_SNTP_SERVER  "pool.ntp.org"
+#endif
+#define MQTT_TASK_SNTP_QUERY_ATTEMPTS  3U
+#define MQTT_TASK_SNTP_QUERY_GAP_MS    1500U
 
 static config_store_credentials_t s_loadedCreds;
 
@@ -212,6 +220,7 @@ static MQTT_TASK_MAYBE_UNUSED void mqtt_task_store_inspection(const inspection_m
         pmsg.inj_defects[i] = msg->inj_defects[i];
     strncpy(pmsg.note, msg->note, sizeof(pmsg.note) - 1U);
     pmsg.timestamp = osKernelGetTickCount();
+    pmsg.logged_at_utc = msg->logged_at_utc;
 
     if (persistent_inspection_queue_store(&pmsg) == 0) {
         LOG_INFO(APP_LAYER_MQTT, "stored inspection for later transmission");
@@ -249,7 +258,8 @@ static int build_full_inspection_json(char *buf, size_t buflen,
                                       int operator_id, int product_id,
                                       const int *pmp, int pmp_count,
                                       const int *inj, int inj_count,
-                                      const char *note)
+                                      const char *note,
+                                      uint32_t logged_at_utc)
 {
     int n = snprintf(buf, buflen,
         "{\"schema_version\":4,\"device_id\":\"%s\",\"operator_id\":%d,\"product_id\":%d,",
@@ -267,8 +277,21 @@ static int build_full_inspection_json(char *buf, size_t buflen,
     if (n < 0) return -1;
 
     k = (note && note[0] != '\0')
-            ? snprintf(buf + n, buflen - (size_t)n, ",\"note\":\"%s\"}", note)
-            : snprintf(buf + n, buflen - (size_t)n, ",\"note\":null}");
+            ? snprintf(buf + n, buflen - (size_t)n, ",\"note\":\"%s\"", note)
+            : snprintf(buf + n, buflen - (size_t)n, ",\"note\":null");
+    if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
+    n += k;
+
+    /* logged_at: include only when the part was stamped with a synced clock;
+     * otherwise omit it and let the server fall back to receipt time. */
+    char iso[24];
+    if (time_source_format_epoch_iso8601(logged_at_utc, iso, (int)sizeof(iso)) > 0) {
+        k = snprintf(buf + n, buflen - (size_t)n, ",\"logged_at\":\"%s\"", iso);
+        if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
+        n += k;
+    }
+
+    k = snprintf(buf + n, buflen - (size_t)n, "}");
     if ((k < 0) || ((size_t)(n + k) >= buflen)) return -1;
     return n + k;
 }
@@ -290,7 +313,7 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
                                              pmsg.product_id,
                                              pmsg.pmp_defects, pmsg.pmp_count,
                                              pmsg.inj_defects, pmsg.inj_count,
-                                             pmsg.note);
+                                             pmsg.note, pmsg.logged_at_utc);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "failed to create stored inspection JSON payload");
@@ -305,6 +328,41 @@ static void mqtt_task_flush_persistent_inspections(const char *topic)
 
         LOG_INFO(APP_LAYER_MQTT, "stored inspection queued successfully");
     }
+}
+
+/* Sync the device clock from SNTP via the ESP-01. MUST be called only while the
+ * MQTT agent is NOT running (e.g. between Wi-Fi-up and MQTT-start): AT+CIPSNTPTIME?
+ * consumes bytes from the shared UART RX ring and would corrupt concurrent MQTT
+ * traffic. Returns quickly once the clock is valid; SNTP needs a few seconds
+ * after CWJAP to sync, so an unsynced first attempt is retried on reconnect. */
+static void mqtt_task_sync_time(void)
+{
+    if (time_source_is_valid()) {
+        return;
+    }
+
+    if (!s_sntpConfigured) {
+        /* tz=0 -> AT+CIPSNTPTIME? returns UTC; we derive local time for display. */
+        if (ESP01_SntpConfigure(0, MQTT_TASK_SNTP_SERVER) != ESP01_SUCCESS) {
+            LOG_WARN(APP_LAYER_MQTT, "SNTP configure failed");
+            return;
+        }
+        s_sntpConfigured = true;
+        LOG_INFO(APP_LAYER_MQTT, "SNTP configured (%s)", MQTT_TASK_SNTP_SERVER);
+    }
+
+    char asctime[40];
+    for (uint32_t attempt = 0U; attempt < MQTT_TASK_SNTP_QUERY_ATTEMPTS; ++attempt) {
+        if ((ESP01_SntpGetTime(asctime, (int)sizeof(asctime)) == ESP01_SUCCESS) &&
+            time_source_set_from_asctime(asctime)) {
+            char iso[24];
+            time_source_format_iso8601(iso, (int)sizeof(iso));
+            LOG_INFO(APP_LAYER_MQTT, "clock synced: %s", iso);
+            return;
+        }
+        osDelay(MQTT_TASK_SNTP_QUERY_GAP_MS);
+    }
+    LOG_INFO(APP_LAYER_MQTT, "clock not synced yet; will retry on reconnect");
 }
 
 /* Publish a status heartbeat (qc/device/{id}/status, QoS 0). Besides registering
@@ -370,7 +428,7 @@ static void mqtt_task_service_inspection_queue(void)
                                              msg.product_id,
                                              msg.pmp_defects, msg.pmp_count,
                                              msg.inj_defects, msg.inj_count,
-                                             msg.note);
+                                             msg.note, msg.logged_at_utc);
 
         if ((len <= 0) || (len >= (int)sizeof(json_payload))) {
             LOG_ERR(APP_LAYER_MQTT, "dropping malformed inspection JSON payload");
@@ -490,6 +548,10 @@ static void mqtt_task(void *pv)
                 taskState = MQTT_TASK_STATE_WIFI_CHECK;
                 break;
             }
+
+            /* Clock sync over the shared UART must happen before the MQTT agent
+             * starts consuming the RX ring. Returns fast once already synced. */
+            mqtt_task_sync_time();
 
             if (tcpConnected) {
                 (void)ESP01_Disconnect(&s_netCtx);

@@ -32,7 +32,8 @@ typedef struct
     int      inj_defects[INSPECTION_MAX_DEFECTS];
     int      inj_count;
     char     note[128];
-    uint32_t timestamp;      /* Time when inspection was created */
+    uint32_t timestamp;      /* Local tick when stored (diagnostic) */
+    uint32_t logged_at_utc;  /* UTC epoch at inspection time; 0 if clock not synced */
 } persistent_inspection_msg_t;
 
 /**

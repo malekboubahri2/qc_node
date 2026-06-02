@@ -6,6 +6,7 @@
 #include "domain/defect_config.h"
 #include "domain/session.h"
 #include "net/inspection_queue.h"
+#include "time/time_source.h"
 
 // Forward declaration of the UI data bridge functions
 // These would be implemented in a C++ file that calls the Model singleton
@@ -234,6 +235,10 @@ void Model::publishInspection()
 
     strncpy(msg.note, m_inspectionNote, sizeof(msg.note) - 1);
     msg.note[sizeof(msg.note) - 1] = '\0';
+
+    /* Stamp when the part was inspected, so an offline-queued part keeps its
+     * real time. 0 when the clock isn't synced yet -> server uses receipt time. */
+    msg.logged_at_utc = time_source_now_utc();
 
     inspection_queue_send(&msg);
 

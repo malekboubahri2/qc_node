@@ -282,6 +282,34 @@ ESP01_Status_t ESP01_LogAvailableNetworks( const char *pTargetSsid,
                                             bool       *pTargetSeen );
 
 /**
+ * @brief Configure the module's SNTP client.
+ *
+ * Issues AT+CIPSNTPCFG to enable SNTP with the given UTC offset and server.
+ * Use tzHours = 0 so AT+CIPSNTPTIME? returns UTC (the device keeps UTC and
+ * derives local time for display).
+ *
+ * @param[in] tzHours  Timezone offset in hours (0 for UTC).
+ * @param[in] pServer  NTP server hostname; NULL defaults to "pool.ntp.org".
+ *
+ * @return ESP01_SUCCESS or a negative error code.
+ */
+ESP01_Status_t ESP01_SntpConfigure( int tzHours, const char *pServer );
+
+/**
+ * @brief Query the current SNTP time as an asctime string.
+ *
+ * Issues AT+CIPSNTPTIME? and copies the "+CIPSNTPTIME:<time>" value (e.g.
+ * "Thu Aug 04 14:48:05 2022") into pOutAsctime. Until the module has synced
+ * it returns a 1970 timestamp; the caller should retry and reject pre-2021.
+ *
+ * @param[out] pOutAsctime  Destination buffer for the asctime string.
+ * @param[in]  outLen       Size of pOutAsctime.
+ *
+ * @return ESP01_SUCCESS or a negative error code.
+ */
+ESP01_Status_t ESP01_SntpGetTime( char *pOutAsctime, int outLen );
+
+/**
  * @brief Open a TCP connection to the MQTT broker.
  *
  * Issues AT+CIPSTART and waits for "CONNECT".

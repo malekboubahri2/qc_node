@@ -88,6 +88,9 @@ static ESP01_Status_t at_wait_network_scan( const char *pTargetSsid,
 static ESP01_Status_t at_wait_wifi_join( uint32_t timeoutMs );
 static ESP01_Status_t at_wait_wifi_query( bool    *pConnected,
                                           uint32_t timeoutMs );
+static ESP01_Status_t at_wait_sntp_query( char    *pOutAsctime,
+                                          int      outLen,
+                                          uint32_t timeoutMs );
 static ESP01_Status_t at_cmd_ok    ( UART_HandleTypeDef *pUart,
                                      const char *pCmd,
                                      uint32_t    timeoutMs );
@@ -706,6 +709,93 @@ static ESP01_Status_t at_wait_wifi_query( bool *pConnected, uint32_t timeoutMs )
 }
 
 /**
+ * @brief Parse the AT+CIPSNTPTIME? response, capturing the asctime string.
+ *
+ * Reads line-by-line until "OK" (success) or "ERROR". The "+CIPSNTPTIME:<time>"
+ * line's value is copied into pOutAsctime (e.g. "Thu Aug 04 14:48:05 2022").
+ */
+static ESP01_Status_t at_wait_sntp_query( char    *pOutAsctime,
+                                          int      outLen,
+                                          uint32_t timeoutMs )
+{
+    char     line[ ESP01_SCAN_LINE_MAX_LEN ];
+    uint16_t lineLen = 0U;
+    uint8_t  byte;
+    uint32_t deadline = HAL_GetTick() + timeoutMs;
+    bool     gotTime = false;
+
+    memset( line, 0, sizeof( line ) );
+    if( ( pOutAsctime != NULL ) && ( outLen > 0 ) )
+    {
+        pOutAsctime[ 0 ] = '\0';
+    }
+
+    while( HAL_GetTick() < deadline )
+    {
+        if( !ring_pop( &esp01RxRing, &byte ) )
+        {
+            osDelay( 1U );
+            continue;
+        }
+
+        if( byte == '\r' )
+        {
+            continue;
+        }
+
+        if( byte != '\n' )
+        {
+            if( lineLen < ( uint16_t )( sizeof( line ) - 1U ) )
+            {
+                line[ lineLen++ ] = ( char )byte;
+                line[ lineLen ] = '\0';
+            }
+            continue;
+        }
+
+        if( lineLen == 0U )
+        {
+            continue;
+        }
+
+        if( strcmp( line, "OK" ) == 0 )
+        {
+            return gotTime ? ESP01_SUCCESS : ESP01_ERR_AT;
+        }
+
+        if( ( strcmp( line, "ERROR" ) == 0 ) || ( strstr( line, "busy" ) != NULL ) )
+        {
+            ESP01_LOG_ERROR( "SNTP query failed: %s\n", line );
+            at_drain_rx_until_quiet( "after failed SNTP query",
+                                     ESP01_AT_POST_FAIL_QUIET_MS,
+                                     ESP01_AT_POST_FAIL_DRAIN_TIMEOUT_MS );
+            return ESP01_ERR_AT;
+        }
+
+        const char *p = strstr( line, "+CIPSNTPTIME:" );
+        if( p != NULL )
+        {
+            p += strlen( "+CIPSNTPTIME:" );
+            if( ( pOutAsctime != NULL ) && ( outLen > 0 ) )
+            {
+                strncpy( pOutAsctime, p, ( size_t )( outLen - 1 ) );
+                pOutAsctime[ outLen - 1 ] = '\0';
+            }
+            gotTime = true;
+            ESP01_LOG_DEBUG( "SNTP time: %s\n", p );
+        }
+
+        lineLen = 0U;
+        line[ 0 ] = '\0';
+    }
+
+    at_drain_rx_until_quiet( "after SNTP query timeout",
+                             ESP01_AT_POST_FAIL_QUIET_MS,
+                             ESP01_AT_POST_FAIL_DRAIN_TIMEOUT_MS );
+    return ESP01_ERR_TIMEOUT;
+}
+
+/**
  * @brief Send an AT command and wait for "OK".
  *
  * Also treats "ERROR" as an explicit failure so we do not spin until timeout.
@@ -1014,6 +1104,36 @@ ESP01_Status_t ESP01_LogAvailableNetworks( const char *pTargetSsid,
     return at_wait_network_scan( pTargetSsid,
                                  pTargetSeen,
                                  ESP01_WIFI_SCAN_TIMEOUT_MS );
+}
+
+ESP01_Status_t ESP01_SntpConfigure( int tzHours, const char *pServer )
+{
+    if( pActiveCtx == NULL )
+    {
+        return ESP01_ERR_PARAM;
+    }
+
+    char cmd[ ESP01_AT_CMD_MAX_LEN ];
+    snprintf( cmd, sizeof( cmd ), "AT+CIPSNTPCFG=1,%d,\"%s\"",
+              tzHours, ( pServer != NULL ) ? pServer : "pool.ntp.org" );
+
+    return at_cmd_ok( pActiveCtx->pUart, cmd, ESP01_AT_TIMEOUT_MS );
+}
+
+ESP01_Status_t ESP01_SntpGetTime( char *pOutAsctime, int outLen )
+{
+    if( ( pActiveCtx == NULL ) || ( pOutAsctime == NULL ) || ( outLen <= 0 ) )
+    {
+        return ESP01_ERR_PARAM;
+    }
+
+    ESP01_Status_t ret = at_send_control_cmd( pActiveCtx->pUart, "AT+CIPSNTPTIME?" );
+    if( ret != ESP01_SUCCESS )
+    {
+        return ret;
+    }
+
+    return at_wait_sntp_query( pOutAsctime, outLen, ESP01_AT_TIMEOUT_MS );
 }
 
 ESP01_Status_t ESP01_Connect( NetworkContext_t *pCtx,
