@@ -12,11 +12,12 @@ void summaryPresenter::activate()
     int idx = model->getCurrentOperatorIdx();
     const char* name = (idx >= 0) ? model->getOperator(idx).name : "---";
 
-    /* Read the part's defect count before publishing (publish clears it). */
-    view.setDisplayData(model->getInspectionDefectCount(), name);
-
-    /* Publish the full part inspection (PMP + INJ) exactly once. */
+    /* Publish the full part inspection (PMP + INJ) exactly once; this also
+     * bumps the session parts-inspected counter. */
     model->publishInspection();
+
+    /* Show how many parts have been inspected since login. */
+    view.setDisplayData(model->getSessionInspectedCount(), name);
 }
 
 void summaryPresenter::deactivate()

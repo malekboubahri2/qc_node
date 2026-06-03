@@ -30,7 +30,8 @@ Model::Model()
       m_connected(false),
       m_pmpCount(0),
       m_injCount(0),
-      m_inspectionPending(false)
+      m_inspectionPending(false),
+      m_sessionInspected(0)
 {
     s_model_instance = this;
     m_preciserBuffer[0] = '\0';
@@ -241,9 +242,10 @@ void Model::publishInspection()
     msg.logged_at_utc = time_source_now_utc();
 
     inspection_queue_send(&msg);
+    ++m_sessionInspected;   /* one more part inspected this session */
 
-    printf("Model: published inspection (product=%d, operator=%d, pmp=%d, inj=%d)\n",
-           msg.product_id, msg.operator_id, msg.pmp_count, msg.inj_count);
+    printf("Model: published inspection (product=%d, operator=%d, pmp=%d, inj=%d, session_parts=%d)\n",
+           msg.product_id, msg.operator_id, msg.pmp_count, msg.inj_count, m_sessionInspected);
 
     clearInspection();
 }
@@ -284,6 +286,7 @@ void Model::setCurrentOperatorIdx(int idx)
         // In a real implementation, we would get the current product ID from somewhere
         // For now, we'll use a placeholder
         session_start(op.id, 1); // Assuming product ID 1 for now
+        m_sessionInspected = 0;  // new session: reset the parts-inspected counter
     }
 }
 

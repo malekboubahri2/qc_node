@@ -55,6 +55,10 @@ public:
     void resetSessionDefectCount();
     int  getSessionDefectCount() const { return session_get_defect_count(); }
 
+    /* Parts inspected since the operator logged in (each published part counts
+     * once). Reset on login; shown on the summary screen. */
+    int  getSessionInspectedCount() const { return m_sessionInspected; }
+
     /* ----- Outgoing Inspection Management (per-part full inspection) -----
      * The PMP and INJ screens each commit their selected defect_type_ids for
      * the current part (empty = OK for that category). The summary screen then
@@ -101,6 +105,9 @@ private:
     int  m_injCount;
     char m_inspectionNote[128];
     bool m_inspectionPending;
+
+    // Parts inspected since login (reset in setCurrentOperatorIdx).
+    int  m_sessionInspected;
 };
 
 #endif // MODEL_HPP
